@@ -1,0 +1,29 @@
+<div class="max-w-3xl mx-auto p-6">
+    <div *ngIf="isLoading" class="text-center py-8">Đang tải bài viết…</div>
+  
+    <div *ngIf="!isLoading && errorMessage" class="bg-red-100 text-red-700 p-4 rounded mb-6">
+      {{ errorMessage }}
+    </div>
+  
+    <div *ngIf="!isLoading && article">
+      <h1 class="text-3xl font-bold mb-6">{{ article.title }}</h1>
+  
+      <ng-container *ngFor="let block of article.contentBlocks">
+        <p *ngIf="block.type === 'text'" class="text-lg leading-relaxed mb-6">
+          {{ block.text }}
+        </p>
+  
+        <figure *ngIf="block.type === 'image'" class="mb-8">
+          <img 
+            [src]="block.image.url" 
+            [alt]="block.image.caption" 
+            class="w-full rounded-lg shadow mb-2"
+          />
+          <figcaption class="text-sm text-gray-500 italic text-center">
+            {{ block.image.caption }}
+          </figcaption>
+        </figure>
+      </ng-container>
+    </div>
+  </div>
+  

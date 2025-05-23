@@ -1,0 +1,95 @@
+<div class="min-h-screen bg-gradient-to-br from-green-100 to-white flex items-center justify-center px-4 py-8">
+    <div class="w-full max-w-md bg-white shadow-2xl rounded-2xl overflow-hidden">
+        <div class="p-8">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-green-700 mb-2">Đăng ký</h2>
+            </div>
+
+            <form class="space-y-6">
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                        Email
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-user text-gray-400"></i>
+                        </div>
+                        <input type="text" id="subject" name="subject" [(ngModel)]="subject" required
+                            #subjectInput="ngModel" placeholder="Nhập email hoặc số điện thoại"
+                            class="pl-10 w-full border-b-2 border-gray-300 focus:border-green-500 transition-colors duration-300 py-2 outline-none"
+                            [class.border-red-500]="subjectInput.invalid && subjectInput.touched">
+                    </div>
+                    <div *ngIf="subjectInput.invalid && subjectInput.touched" class="text-red-500 text-sm mt-1">
+                        Email là bắt buộc
+                    </div>
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+                        Mật khẩu
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-lock text-gray-400"></i>
+                        </div>
+                        <input [type]="showPassword ? 'text' : 'password'" id="password" name="password"
+                            [(ngModel)]="password" required #passwordInput="ngModel" autocomplete="off"
+                            placeholder="Nhập mật khẩu"
+                            class="pl-10 w-full border-b-2 border-gray-300 focus:border-green-500 transition-colors duration-300 py-2 outline-none [&::-ms-reveal]:hidden [&::-ms-clear]:hidden"
+                            [class.border-red-500]="passwordInput.invalid && passwordInput.touched">
+                        <button type="button"
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer z-10"
+                            (click)="togglePasswordVisibility($event)">
+                            <i [class]="showPassword ? 'fas fa-eye' : 'fas fa-eye-slash'"
+                                class="text-gray-400 hover:text-green-500"></i>
+                        </button>
+                    </div>
+                    <div *ngIf="passwordInput.invalid && passwordInput.touched" class="text-red-500 text-sm mt-1">
+                        Mật khẩu là bắt buộc
+                    </div>
+                </div>
+
+                <div>
+                    <label for="retypePassword" class="block text-sm font-medium text-gray-700 mb-2">
+                        Nhập lại mật khẩu
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-lock text-gray-400"></i>
+                        </div>
+                        <input [type]="showRetypesPassword ? 'text' : 'password'" id="retypePassword"
+                            name="retypePassword" [(ngModel)]="retypePassword" required #retypePasswordInput="ngModel"
+                            autocomplete="off" placeholder="Nhập lại mật khẩu"
+                            class="pl-10 w-full border-b-2 border-gray-300 focus:border-green-500 transition-colors duration-300 py-2 outline-none [&::-ms-reveal]:hidden [&::-ms-clear]:hidden"
+                            [class.border-red-500]="retypePasswordInput.invalid && retypePasswordInput.touched">
+                        <button type="button"
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer z-10"
+                            (click)="togglePasswordVisibility($event, 'retype')">
+                            <i [class]="showRetypesPassword ? 'fas fa-eye' : 'fas fa-eye-slash'"
+                                class="text-gray-400 hover:text-green-500"></i>
+                        </button>
+                    </div>
+                    <div *ngIf="retypePasswordInput.invalid && retypePasswordInput.touched" class="text-red-500 text-sm mt-1">
+                        Nhập lại mật khẩu là bắt buộc
+                    </div>
+                </div>
+
+                <div *ngIf="!inputCode">
+                    <button type="submit" (click)="verify()"
+                        class="w-full bg-green-600 text-white py-3 rounded-lg shadow-md transition-colors duration-300 hover:bg-green-700 disabled:opacity-50">
+                        Đăng ký
+                    </button>
+                </div>
+                <div *ngIf="inputCode">
+                    <label for="code" class="block text-sm font-medium text-gray-700 mb-1">Mã xác nhận</label>
+                    <input id="code" name="code" [(ngModel)]="code" placeholder="Nhập mã xác nhận"
+                        class="w-full border-b-2 border-gray-300 focus:border-green-500 transition-colors duration-300 py-2 outline-none" />
+                    <button type="submit" (click)="register()"
+                        class="mt-4 w-full bg-green-600 text-white py-3 rounded-lg shadow-md transition-colors duration-300 hover:bg-green-700">
+                        Xác nhận
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

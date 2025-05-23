@@ -1,0 +1,94 @@
+<app-home-admin></app-home-admin>
+<div class="container mx-auto px-4 py-6">
+    <div class="bg-white p-4 rounded-lg shadow">
+        <h3 class="text-lg font-semibold mb-4">Danh sách Bác sĩ</h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Tìm theo tên -->
+            <div class="flex flex-col">
+                <label for="keyword" class="mb-1 text-sm font-medium text-gray-700">Tìm kiếm theo tên</label>
+                <input id="keyword" type="text" [(ngModel)]="keyword" (input)="getAllDoctorsByAdmin()"
+                    placeholder="Nhập tên bác sĩ..." class="block w-full border border-gray-300 rounded-md px-4 py-2 text-gray-700 
+               placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition" />
+            </div>
+
+            <!-- Chuyên khoa -->
+            <div class="flex flex-col">
+                <label for="department" class="mb-1 text-sm font-medium text-gray-700">Chuyên khoa</label>
+                <select id="department" [(ngModel)]="departmentSelected" (change)="getAllDoctorsByAdmin()" class="block w-full border border-gray-300 rounded-md px-4 py-2 text-gray-700 
+               focus:outline-none focus:ring-2 focus:ring-green-500 transition">
+                    <option [ngValue]="null">Tất cả</option>
+                    <option *ngFor="let d of departmentList" [ngValue]="d.id">{{ d.name }}</option>
+                </select>
+            </div>
+
+            <!-- Trạng thái -->
+            <div class="flex flex-col">
+                <label for="status" class="mb-1 text-sm font-medium text-gray-700">Trạng thái</label>
+                <select id="status" [(ngModel)]="statusSelected" (change)="getAllDoctorsByAdmin()" class="block w-full border border-gray-300 rounded-md px-4 py-2 text-gray-700 
+               focus:outline-none focus:ring-2 focus:ring-green-500 transition">
+                    <option [ngValue]="null">Tất cả</option>
+                    <option *ngFor="let s of statusOptions" [ngValue]="s">
+                        {{ s ? 'Đang hoạt động' : 'Đã ẩn' }}
+                    </option>
+                </select>
+            </div>
+        </div>
+
+
+        <ul class="divide-y divide-gray-200">
+            <!-- HEADER -->
+            <li class="grid grid-cols-12 gap-4 py-2 font-semibold text-gray-800">
+                <div class="col-span-2">Hình ảnh</div>
+                <div class="col-span-2">Họ tên</div>
+                <div class="col-span-2">Khoa</div>
+                <div class="col-span-2">Mã số</div>
+                <div class="col-span-2 text-center">Năm kinh nghiệm</div>
+                <div class="col-span-1 text-center">Trạng thái</div>
+                <div class="col-span-1"></div>
+            </li>
+
+            <!-- ROWS -->
+            <ng-container *ngFor="let doctor of doctorList?.items; trackBy: trackById">
+                <li class="grid grid-cols-12 gap-4 py-3 items-center hover:bg-gray-50 transition">
+                    <div class="col-span-2 text-sm text-gray-700">
+                        <img [src]="doctor.avatar_url" alt="Ảnh bác sĩ" class="w-full h-48 object-contain"
+                            (error)="handleImageError($event)">
+                    </div>
+                    <div class="col-span-2 text-sm text-gray-800">
+                        {{ doctor.full_name }}
+                    </div>
+                    <div class="col-span-2 text-sm text-gray-800">
+                        {{ doctor.department_name }}
+                    </div>
+                    <div class="col-span-2 text-sm text-gray-700">
+                        {{ doctor.license_number }}
+                    </div>
+                    <div class="col-span-2 text-sm font-medium text-indigo-600 text-center">
+                        {{ doctor.experience_years }}
+                    </div>
+                    <div class="col-span-1 text-sm font-medium text-indigo-600 text-center">
+                        {{ doctor.is_available ? 'Hoạt động' : 'Đã ẩn' }}
+                    </div>
+                    <div class="col-span-1 flex justify-end">
+                        <button class="bg-gradient-to-r from-blue-400 to-blue-800 text-white px-2 py-1 rounded-lg shadow
+                     hover:from-blue-600 hover:to-blue-200 transition" (click)="toggleStatusDoctor(doctor.id)">
+                            {{ doctor.is_available ? 'Ẩn' : 'Hoạt động lại' }}
+                        </button>
+                    </div>
+                </li>
+            </ng-container>
+        </ul>
+
+        <div class="flex justify-center mt-4">
+            <button (click)="prevCompleted()" [disabled]="doctorList?.currentPage === 0"
+                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l">
+                Prev
+            </button>
+            <button (click)="nextCompleted()" [disabled]="doctorList?.currentPage ?? 0 + 1 === doctorList?.totalPages"
+                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r">
+                Next
+            </button>
+        </div>
+    </div>
+</div>

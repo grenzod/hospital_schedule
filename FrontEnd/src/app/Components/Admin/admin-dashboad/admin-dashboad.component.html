@@ -1,0 +1,79 @@
+<app-home-admin></app-home-admin>
+<div class="container mx-auto px-4 py-6">
+  <div class="p-4 bg-white rounded-lg shadow-md space-y-4">
+    <h2 class="font-bold text-2xl mb-4 text-center">Theo dõi thống kê</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+      <div class="h-[300px]">
+        <h2 class="text-xl font-semibold mb-4">Người dùng mới (6 tháng)</h2>
+        <canvas baseChart [datasets]="barChartData" [labels]="barChartLabels" [options]="barChartOptions"
+          [type]="barChartType">
+        </canvas>
+      </div>
+
+      <div class="h-[300px]">
+        <h2 class="text-xl font-semibold mb-4">Các lịch đặt khám mới (6 tháng)</h2>
+        <canvas baseChart [datasets]="barChartDataOfAppointment" [labels]="barChartLabelsOfAppointment"
+          [options]="barChartOptions" [type]="barChartType">
+        </canvas>
+      </div>
+
+      <div class="h-[300px] md:col-span-2">
+        <h2 class="text-xl font-semibold mb-4">Các Bình luận mới (6 tháng)</h2>
+        <canvas baseChart [datasets]="barChartDataOfComment" [labels]="barChartLabelsOfComment" [options]="barChartOptions"
+          [type]="barChartType">
+        </canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-4 bg-white rounded-lg shadow-md mt-6">
+    <h2 class="font-bold text-2xl mb-4 text-center">Quản lý quảng cáo trên trang chủ</h2>
+
+    <div class="flex gap-4">
+      <!-- Left side -->
+      <div class="flex-1 relative h-[400px]">
+        <!-- Previous slide button -->
+        <button (click)="prevSlide()"
+          class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-black/30 hover:bg-black/50 text-white p-4 rounded-r">
+          <span class="text-2xl">←</span>
+        </button>
+
+        <!-- Current slide -->
+        <div class="relative w-full h-full">
+          <ng-container *ngIf="slides.length > 0">
+            <img [src]="slides[currentSlideIndex].url" 
+                 [alt]="slides[currentSlideIndex].name"
+                 class="w-full h-full object-cover transform transition-transform duration-500 ease-in-out hover:scale-105">
+          </ng-container>
+          <div *ngIf="slides.length === 0" class="flex items-center justify-center h-full">
+            <p class="text-gray-500">No images available</p>
+          </div>
+        </div>
+
+        <!-- Next slide button -->
+        <button (click)="nextSlide()"
+          class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-black/30 hover:bg-black/50 text-white p-4 rounded-l">
+          <span class="text-2xl">→</span>
+        </button>
+      </div>
+
+      <!-- Right side -->
+      <div class="w-48 flex flex-col gap-4 justify-center">
+        <button (click)="deleteCurrentSlide()"
+          class="w-full p-4 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors 
+                flex items-center justify-center gap-2">
+          Xóa ảnh hiện tại
+        </button>
+
+        <label
+          class="w-full p-4 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors 
+                flex items-center justify-center gap-2 cursor-pointer">
+          <span>Thêm ảnh mới</span>
+          <input type="file" (change)="onFileSelected($event)" accept="image/*" class="hidden">
+        </label>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,152 @@
+<div class="container mx-auto px-4 py-8 max-w-4xl space-y-8">
+  <!-- Hồ sơ cá nhân -->
+  <div class="bg-white shadow-xl rounded-2xl overflow-hidden">
+    <div class="bg-green-600 text-white p-6 text-center">
+      <h1 class="text-4xl font-extrabold mb-1">Hồ Sơ Cá Nhân</h1>
+      <p class="text-green-100 text-lg">Quản lý thông tin của bạn</p>
+    </div>
+    <form #profileForm="ngForm" class="p-8 space-y-8">
+      <div class="flex flex-col items-center space-y-6">
+        <!-- Avatar -->
+        <div class="relative">
+          <img [src]="profile.avatar_url" [alt]="profile.fullName"
+            class="w-40 h-40 rounded-full border-4 border-white shadow-lg object-cover"
+            (error)="handleImageError($event)" />
+          <i class="fas fa-plus absolute top-1 right-1 text-white text-xl"></i>
+          <input type="file" accept="image/*"
+            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer rounded-full"
+            (change)="onFileChange($event)" />
+        </div>
+
+        <!-- Thông tin -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+          <!-- Số Điện Thoại -->
+          <div>
+            <label class="block text-gray-700 font-medium mb-2">Số Điện Thoại</label>
+            <div
+              class="flex items-center border-b-2 border-gray-300 focus-within:border-green-500 transition-colors duration-300">
+              <i class="fas fa-phone text-gray-400 mr-3"></i>
+              <input type="text" name="phoneNumber" [(ngModel)]="profile.phoneNumber" placeholder="Nhập số điện thoại"
+                class="w-full py-2 outline-none" />
+            </div>
+          </div>
+
+          <!-- Họ và Tên -->
+          <div>
+            <label class="block text-gray-700 font-medium mb-2">Họ và Tên</label>
+            <div
+              class="flex items-center border-b-2 border-gray-300 focus-within:border-green-500 transition-colors duration-300">
+              <i class="fas fa-user text-gray-400 mr-3"></i>
+              <input type="text" name="fullName" [(ngModel)]="profile.fullName" placeholder="Nhập họ và tên"
+                class="w-full py-2 outline-none" />
+            </div>
+          </div>
+
+          <!-- Quê Quán -->
+          <div>
+            <label class="block text-gray-700 font-medium mb-2">Quê Quán</label>
+            <div
+              class="flex items-center border-b-2 border-gray-300 focus-within:border-green-500 transition-colors duration-300">
+              <i class="fas fa-map-marker-alt text-gray-400 mr-3"></i>
+              <input type="text" name="hometown" [(ngModel)]="profile.hometown" placeholder="Nhập quê quán"
+                class="w-full py-2 outline-none" />
+            </div>
+          </div>
+
+          <!-- Ngày Sinh -->
+          <div>
+            <label class="block text-gray-700 font-medium mb-2">Ngày Sinh</label>
+            <div
+              class="flex items-center border-b-2 border-gray-300 focus-within:border-green-500 transition-colors duration-300">
+              <i class="fas fa-calendar-alt text-gray-400 mr-3"></i>
+              <input type="date" name="birthDate" [(ngModel)]="profile.birthDate" class="w-full py-2 outline-none" />
+            </div>
+          </div>
+
+          <!-- Giới tính -->
+          <div class="md:col-span-2">
+            <label class="block text-gray-700 font-medium mb-2">Giới tính</label>
+            <div class="flex justify-center space-x-6">
+              <label class="flex items-center space-x-2 cursor-pointer">
+                <input type="radio" name="gender" [value]="Gender.MALE" [(ngModel)]="profile.gender"
+                  class="hidden peer" />
+                <span
+                  class="w-5 h-5 rounded-full border border-gray-300 peer-checked:border-green-500 peer-checked:bg-green-500 transition-all"></span>
+                <span class="text-gray-700 peer-checked:text-green-600">Nam</span>
+              </label>
+              <label class="flex items-center space-x-2 cursor-pointer">
+                <input type="radio" name="gender" [value]="Gender.FEMALE" [(ngModel)]="profile.gender"
+                  class="hidden peer" />
+                <span
+                  class="w-5 h-5 rounded-full border border-gray-300 peer-checked:border-green-500 peer-checked:bg-green-500 transition-all"></span>
+                <span class="text-gray-700 peer-checked:text-green-600">Nữ</span>
+              </label>
+              <label class="flex items-center space-x-2 cursor-pointer">
+                <input type="radio" name="gender" [value]="Gender.OTHER" [(ngModel)]="profile.gender"
+                  class="hidden peer" />
+                <span
+                  class="w-5 h-5 rounded-full border border-gray-300 peer-checked:border-green-500 peer-checked:bg-green-500 transition-all"></span>
+                <span class="text-gray-700 peer-checked:text-green-600">Khác</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nút Lưu -->
+        <div class="text-center">
+          <button type="button" (click)="saveProfile()"
+            class="bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 rounded-xl shadow-md transition-colors">
+            Lưu Thông Tin
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Đổi mật khẩu -->
+  <div class="bg-white shadow-xl rounded-2xl overflow-hidden">
+    <div class="bg-green-600 text-white p-6 text-center">
+      <h1 class="text-2xl font-extrabold">Thay đổi mật khẩu</h1>
+    </div>
+    <form #passwordForm="ngForm" class="p-8 space-y-6">
+      <!-- Mật khẩu cũ -->
+      <div>
+        <label class="block text-gray-700 font-medium mb-2">Mật khẩu cũ</label>
+        <div class="relative">
+          <input [type]="showOldPassword ? 'text' : 'password'" name="oldPassword" [(ngModel)]="oldPassword" required
+            placeholder="Nhập mật khẩu cũ"
+            class="pl-10 pr-10 w-full border-b-2 border-gray-300 focus:border-green-500 transition-colors duration-300 py-2 outline-none" />
+          <i class="fas fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+          <button type="button" class="absolute right-3 top-1/2 transform -translate-y-1/2"
+            (click)="togglePasswordVisibility($event, 'old')">
+            <i [class]="showOldPassword ? 'fas fa-eye' : 'fas fa-eye-slash'"
+              class="text-gray-400 hover:text-green-500"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mật khẩu mới -->
+      <div>
+        <label class="block text-gray-700 font-medium mb-2">Mật khẩu mới</label>
+        <div class="relative">
+          <input [type]="showNewPassword ? 'text' : 'password'" name="newPassword" [(ngModel)]="newPassword" required
+            placeholder="Nhập mật khẩu mới"
+            class="pl-10 pr-10 w-full border-b-2 border-gray-300 focus:border-green-500 transition-colors duration-300 py-2 outline-none" />
+          <i class="fas fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+          <button type="button" class="absolute right-3 top-1/2 transform -translate-y-1/2"
+            (click)="togglePasswordVisibility($event, 'new')">
+            <i [class]="showNewPassword ? 'fas fa-eye' : 'fas fa-eye-slash'"
+              class="text-gray-400 hover:text-green-500"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="text-center">
+        <button type="button" 
+          class="bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 rounded-xl shadow-md transition-colors">
+          Thay đổi mật khẩu
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

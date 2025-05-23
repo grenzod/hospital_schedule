@@ -1,0 +1,65 @@
+<div class="container mx-auto px-4 py-6 space-y-8">
+    <div class="bg-white p-4 rounded-lg shadow">
+      <h3 class="text-lg font-semibold mb-3">Lịch sử khám</h3>
+      <ul class="divide-y divide-gray-200">
+        <!-- HEADER -->
+        <li class="grid grid-cols-12 gap-x-4 py-2 font-semibold text-gray-800">
+          <span class="col-span-3">Ngày &amp; Giờ</span>
+          <span class="col-span-3">Họ và tên</span>
+          <span class="col-span-3">Triệu chứng</span>
+          <span class="col-span-2">Trạng thái</span>
+          <span class="col-span-1"></span>
+        </li>
+      
+        <!-- DÒNG DỮ LIỆU -->
+        <ng-container *ngFor="let appt of appointmentScheduled?.items; trackBy: trackById">
+          <li class="grid grid-cols-12 gap-x-4 py-2 items-center hover:bg-gray-50 transition">
+            <span class="col-span-3 text-sm text-gray-700">
+              {{ appt.appointment_date }} {{ appt.appointment_time }}
+            </span>
+            <span class="col-span-3 text-sm text-gray-800">
+              {{ appt.patient_name }}
+            </span>
+            <span class="col-span-3 text-sm text-gray-800">
+              {{ appt.symptoms }}
+            </span>
+            <span class="col-span-2 text-sm font-medium text-indigo-600">
+              {{ appt.appointment_status }}
+            </span>
+            <span class="col-span-1 flex justify-end" (click)="toggleEditCompleted(appt.id)">
+              <button *ngIf="appt.appointment_status === 'COMPLETED'"
+              class="bg-gradient-to-r from-blue-400 to-blue-800 text-white px-2 py-1 rounded-lg shadow
+                       hover:from-blue-600 hover:to-blue-200 transition">
+                Xem chi tiết
+              </button>
+            </span>
+          </li>
+      
+          <!-- KHUNG XEM CHI TIẾT -->
+          <li *ngIf="editingCompleted[appt.id]" class="bg-blue-50 p-4 rounded-b-lg">
+            <div class="bg-white p-3 rounded shadow">
+              <h4 class="font-semibold mb-1">Kế hoạch điều trị:</h4>
+              <p>{{ appt.treatment_plan }}</p>
+            </div>
+          </li>
+        </ng-container>
+      </ul>
+      
+  
+      <!-- PAGINATION COMPLETED -->
+      <div class="flex justify-end items-center mt-4 space-x-2">
+        <button (click)="prevCompleted()" [disabled]="appointmentScheduled?.currentPage === 0"
+          class="px-3 py-1 bg-gray-200 rounded disabled:opacity-50">
+          ← Trước
+        </button>
+        <span class="text-sm text-gray-600">
+          {{ (appointmentScheduled?.currentPage ?? 0) + 1 }} / {{ appointmentScheduled?.totalPages }}
+        </span>
+        <button (click)="nextCompleted()"
+          [disabled]="(appointmentScheduled?.currentPage ?? 0) + 1 === appointmentScheduled?.totalPages"
+          class="px-3 py-1 bg-gray-200 rounded disabled:opacity-50">
+          Sau →
+        </button>
+      </div>
+    </div>
+  </div>

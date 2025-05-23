@@ -1,0 +1,94 @@
+<!-- chat.component.html -->
+<div class="flex h-screen bg-gray-100">
+  <div class="flex-1 flex flex-col">
+    <!-- Nội dung chat -->
+    <div class="flex-1 overflow-y-auto p-6 space-y-6 bg-gray-50" #chatContainer>
+      <!-- Tin nhắn AI -->
+      <div class="flex items-start mb-4">
+        <div class="w-10 h-10 rounded-full mr-3 bg-gray-300 flex items-center justify-center shadow-sm">
+          <i class="fas fa-brain text-gray-700 text-xl"></i>
+        </div>
+        <div class="flex flex-col gap-3">
+          <div class="bg-white p-4 rounded-2xl shadow-sm max-w-xl">
+            <p>Hello! I'm a AI assistant. You may ask me questions concerning health or patients' feedback on doctors.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tin nhắn người dùng -->
+      <div *ngIf="showSuggestions && messages.length === 0" class="flex justify-end items-start mb-4">
+        <div class="bg-green-100 p-4 rounded-2xl shadow-sm max-w-xl mr-3">
+          <div class="flex flex-col gap-2">
+            <button *ngFor="let question of suggestionQuestions" (click)="selectSuggestion(question)"
+              class="bg-green-50 hover:bg-green-100 text-green-700 text-left p-3 rounded-xl border border-green-200 transform transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 hover:shadow-md">
+              {{ question }}
+            </button>
+          </div>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center shadow-sm">
+          <i class="fas fa-user text-gray-700 text-xl"></i>
+        </div>
+      </div>
+
+      <!-- Các tin nhắn động và loading -->
+      <ng-container *ngFor="let message of messages; let last = last">
+        <div [ngClass]="{
+              'flex items-start mb-4': message.role === 'assistant',
+              'flex justify-end items-start mb-4': message.role === 'user'
+            }">
+          <ng-container *ngIf="message.role=== 'assistant'">
+            <div class="w-10 h-10 rounded-full mr-3 bg-gray-300 flex items-center justify-center shadow-sm">
+              <i class="fas fa-brain text-gray-700 text-xl"></i>
+            </div>
+            <div class="bg-white p-4 rounded-2xl shadow-sm max-w-xl">
+              <p>{{ message.content }}</p>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="message.role === 'user'">
+            <div class="bg-green-100 p-4 rounded-2xl shadow-sm max-w-xl mr-3">
+              <p>{{ message.content }}</p>
+            </div>
+            <div class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center shadow-sm">
+              <i class="fas fa-user text-gray-700 text-xl"></i>
+            </div>
+          </ng-container>
+        </div>
+
+        <!-- Loading animation sau tin nhắn cuối cùng của user -->
+        <div *ngIf="last && message.role === 'user' && isLoading" class="flex items-start mb-4">
+          <div class="w-10 h-10 rounded-full mr-3 bg-gray-300 flex items-center justify-center shadow-sm">
+            <i class="fas fa-brain text-gray-700 text-xl"></i>
+          </div>
+          <div class="bg-white p-4 rounded-2xl shadow-sm">
+            <div class="flex space-x-2">
+              <div class="w-3 h-3 bg-green-500 rounded-full animate-bounce" style="animation-delay: 0s"></div>
+              <div class="w-3 h-3 bg-green-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+              <div class="w-3 h-3 bg-green-500 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <!-- Khung nhập tin nhắn - PHẦN ĐƯỢC CẢI THIỆN -->
+    <div class="bg-white p-5 border-t shadow-sm">
+      <div class="relative flex items-center">
+        <textarea #inputBox [(ngModel)]="newMessage" (input)="onInput()" placeholder="Input your question..."
+          class="w-full pr-16 pl-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none shadow-sm"
+          rows="1"></textarea>
+
+        <!-- Gợi ý từ tiếp theo -->
+        <div *ngIf="suggestion" class="absolute pointer-events-none text-gray-400"
+          [style.left]="getCursorPosition() + 'px'" [style.top]="3 + 'px'">
+          <span class="suggestion-text">{{ ' ' + suggestion }}</span>
+        </div>
+
+        <button (click)="sendMessage()"
+          class="absolute right-3 bottom-1/2 transform translate-y-1/2 bg-green-500 text-white p-3 rounded-lg hover:bg-green-600 transition duration-200 shadow-md flex items-center justify-center">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,32 @@
+<div class="container mx-auto px-4 py-8">
+    <!-- Search Bar -->
+    <div class="mb-6">
+        <div class="flex gap-4">
+            <input type="text" [(ngModel)]="searchKeyword" (input)="onSearch()" placeholder="Tìm kiếm phòng ban..."
+                class="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500">
+        </div>
+    </div>
+
+    <!-- Departments Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div *ngFor="let department of departments"
+            class="bg-white rounded-lg shadow-lg overflow-hidden cursor-pointer hover:shadow-xl transition-shadow"
+            (click)="selectDepartment(department.id)">
+            <img [src]="department.thumbnail_url" [alt]="department.name" class="w-full h-48 object-cover"
+                (error)="handleImageError($event)">
+            <div class="p-4">
+                <h3 class="text-lg font-semibold text-gray-800">{{department.name}}</h3>
+                <p class="text-gray-600 mt-2">{{department.description}}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="mt-6 flex justify-center gap-2" *ngIf="totalPages > 1">
+        <button *ngFor="let page of [].constructor(totalPages); let i = index" (click)="onPageChange(i)"
+            [class.bg-green-500]="currentPage === i" [class.text-white]="currentPage === i"
+            class="px-3 py-1 rounded-md border hover:bg-green-100 transition-colors">
+            {{i + 1}}
+        </button>
+    </div>
+</div>

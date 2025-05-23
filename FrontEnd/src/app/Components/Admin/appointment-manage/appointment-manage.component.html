@@ -1,0 +1,104 @@
+<app-home-admin></app-home-admin>
+<div class="container mx-auto px-4 py-6 space-y-4">
+  <!-- Filter Tìm kiếm -->
+  <div class="bg-white p-4 rounded-lg shadow flex flex-wrap gap-4 items-end">
+    <!-- Tên bệnh nhân -->
+    <div class="flex-1 min-w-[200px]">
+      <label class="block text-sm font-medium text-gray-700 mb-1">Bệnh nhân</label>
+      <input type="text" [(ngModel)]="namePatient" (ngModelChange)="GetAppointmentByAdmin()"
+        class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring focus:ring-green-200"
+        placeholder="Tìm theo tên bệnh nhân" />
+    </div>
+
+    <!-- Tên bác sĩ -->
+    <div class="flex-1 min-w-[200px]">
+      <label class="block text-sm font-medium text-gray-700 mb-1">Bác sĩ</label>
+      <input type="text" [(ngModel)]="nameDoctor" (ngModelChange)="GetAppointmentByAdmin()"
+        class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring focus:ring-green-200"
+        placeholder="Tìm theo tên bác sĩ" />
+    </div>
+
+    <!-- Trạng thái cuộc hẹn -->
+    <div class="w-48">
+      <label class="block text-sm font-medium text-gray-700 mb-1">Trạng thái</label>
+      <select [(ngModel)]="appointmentStatus" (change)="GetAppointmentByAdmin()"
+        class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring focus:ring-green-200">
+        <option [ngValue]="null">Tất cả</option>
+        <option *ngFor="let s of appointmentStatusOptions" [ngValue]="s">{{ s }}</option>
+      </select>
+    </div>
+
+    <!-- Trạng thái thanh toán -->
+    <div class="w-48">
+      <label class="block text-sm font-medium text-gray-700 mb-1">Thanh toán</label>
+      <select [(ngModel)]="paymenStatus" (change)="GetAppointmentByAdmin()"
+        class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring focus:ring-green-200">
+        <option [ngValue]="null">Tất cả</option>
+        <option *ngFor="let p of paymentStatusOptions" [ngValue]="p">{{ p }}</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Danh sách lịch khám -->
+  <div class="bg-white p-6 rounded-lg shadow">
+    <ul class="divide-y divide-gray-200">
+      <!-- HEADER -->
+      <li
+        class="sticky top-0 bg-gray-50 grid grid-cols-12 gap-x-6 py-3 px-4 font-semibold text-gray-700 uppercase tracking-wide">
+        <div class="col-span-1">Ngày &amp; Giờ</div>
+        <div class="col-span-2 text-center">Bệnh nhân</div>
+        <div class="col-span-2 text-center">Bác sĩ</div>
+        <div class="col-span-3 text-center">Triệu chứng</div>
+        <div class="col-span-1 text-center">Trạng thái</div>
+        <div class="col-span-1 text-center">Thanh toán</div>
+        <div class="col-span-2 text-center">Chức năng</div>
+      </li>
+
+      <!-- ROWS -->
+      <ng-container *ngFor="let appt of appointmentScheduled?.items; trackBy: trackById">
+        <li
+          class="grid grid-cols-12 gap-x-6 gap-y-2 py-4 px-4 items-center hover:bg-gray-50 transition-colors duration-150">
+          <div class="col-span-1 text-sm text-gray-700 leading-snug">
+            {{ appt.appointment_date }}<br />
+            <span class="text-xs text-gray-500">{{ appt.appointment_time }}</span>
+          </div>
+          <div class="col-span-2 text-sm text-gray-800 text-center">{{ appt.patient_name }}</div>
+          <div class="col-span-2 text-sm text-gray-800 text-center">{{ appt.doctor_name }}</div>
+          <div class="col-span-3 text-sm text-gray-700">{{ appt.symptoms }}</div>
+          <div class="col-span-1 text-sm font-medium text-indigo-600 text-center">{{ appt.appointment_status }}</div>
+          <div class="col-span-1 text-sm font-medium text-indigo-600 text-center">{{ appt.payment_status }}</div>
+          <div class="col-span-2 flex justify-end space-x-3">
+            <button *ngIf="appt.appointment_status === 'COMPLETED' && appt.payment_status === 'PENDING'"
+              class="px-4 py-1 rounded-lg shadow text-white bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-600 transition"
+              (click)="togglePaymentStatus(appt.id)">
+              Đã thanh toán
+            </button>
+
+            <button *ngIf="appt.payment_status === 'PAID'"
+              class="px-4 py-1 rounded-lg shadow text-white bg-gradient-to-r from-green-500 to-green-700 hover:from-green-600 hover:to-green-600 transition"
+              (click)="openPDF(appt.id)">
+              Xuất PDF
+            </button>
+          </div>
+        </li>
+      </ng-container>
+    </ul>
+
+    <!-- Pagination -->
+    <div class="flex justify-end items-center space-x-3 mt-6 px-4">
+      <button (click)="prevCompleted()" [disabled]="appointmentScheduled?.currentPage === 0"
+        class="px-4 py-2 bg-gray-200 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300 transition">
+        ← Trước
+      </button>
+      <span class="text-sm text-gray-600">
+        {{ (appointmentScheduled?.currentPage ?? 0) + 1 }} / {{ appointmentScheduled?.totalPages }}
+      </span>
+      <button (click)="nextCompleted()"
+        [disabled]="(appointmentScheduled?.currentPage ?? 0) + 1 === appointmentScheduled?.totalPages"
+        class="px-4 py-2 bg-gray-200 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300 transition">
+        Sau →
+      </button>
+    </div>
+  </div>
+
+</div>

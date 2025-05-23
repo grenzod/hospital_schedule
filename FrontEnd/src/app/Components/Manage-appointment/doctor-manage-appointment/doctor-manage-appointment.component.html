@@ -1,0 +1,119 @@
+<div class="container mx-auto px-4 py-6 space-y-8">
+  <div class="container mx-auto bg-white p-4 rounded-lg shadow">
+    <div class="bg-white rounded-lg shadow">
+      <header class="px-6 py-4 border-b border-gray-300">
+        <h3 class="text-lg font-semibold text-gray-800">Danh sách Lịch khám sắp tới</h3>
+      </header>
+
+      <div *ngFor="let date of dates" class="border-b border-gray-300 last:border-0">
+        <div class="px-6 py-4 flex justify-between items-center bg-gray-50">
+          <h4 class="text-md font-medium text-gray-800">
+            {{ date | date:'EEEE, MMM d' }}
+          </h4>
+          <button class="bg-gradient-to-r from-red-400 to-red-800 text-white px-3 py-1 rounded-lg
+                   shadow hover:from-red-600 hover:to-red-200 transform hover:scale-105 transition"
+            (click)="loadDate(date)">
+            {{ expandedDates.has(date) ? 'Ẩn' : 'Xem' }}
+          </button>
+        </div>
+
+        <div *ngIf="expandedDates.has(date)" class="divide-y divide-gray-300">
+          <ul>
+            <li *ngFor="let appt of schedule.get(date)!.items"
+              class="px-6 py-4 flex justify-between items-center hover:bg-gray-50 transition-shadow">
+              <div class="flex space-x-4 w-full">
+                <span class="w-1/6 text-sm text-gray-700">{{ appt.appointment_time }}</span>
+                <span class="w-1/3 text-sm text-gray-800">{{ appt.patient_name }}</span>
+                <span class="w-1/3 text-sm text-gray-800">{{ appt.phone_number }}</span>
+                <span class="w-1/3 text-sm text-gray-700">{{ appt.symptoms }}</span>
+                <span class="w-1/6 text-sm font-medium text-indigo-600">
+                  {{ appt.appointment_status }}
+                </span>
+              </div>
+            </li>
+          </ul>
+
+          <!-- Phân trang Pending -->
+          <div class="px-6 py-4 flex justify-end items-center space-x-3 bg-gray-50">
+            <button (click)="prevPage(date)" [disabled]="schedule.get(date)!.currentPage === 0"
+              class="px-3 py-1 bg-gray-200 rounded disabled:opacity-50 disabled:cursor-not-allowed">
+              ← Trước
+            </button>
+            <span class="text-sm text-gray-600">
+              {{ schedule.get(date)!.currentPage + 1 }} / {{ schedule.get(date)!.totalPages }}
+            </span>
+            <button (click)="nextPage(date)"
+              [disabled]="schedule.get(date)!.currentPage + 1 === schedule.get(date)!.totalPages"
+              class="px-3 py-1 bg-gray-200 rounded disabled:opacity-50 disabled:cursor-not-allowed">
+              Sau →
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- PHẦN COMPLETED -->
+  <div class="bg-white p-4 rounded-lg shadow">
+    <h3 class="text-lg font-semibold mb-3">Danh sách Lịch khám đã hoàn thành</h3>
+    <ul class="divide-y divide-gray-200">
+      <!-- HEADER -->
+      <li class="grid grid-cols-12 gap-x-4 py-2 font-semibold text-gray-800">
+        <span class="col-span-3">Ngày &amp; Giờ</span>
+        <span class="col-span-3">Họ và tên</span>
+        <span class="col-span-3">Triệu chứng</span>
+        <span class="col-span-2">Trạng thái</span>
+        <span class="col-span-1"></span>
+      </li>
+
+      <ng-container *ngFor="let appt of completedSchedule?.items; trackBy: trackById">
+        <!-- DÒNG COMPLETED -->
+        <li class="grid grid-cols-12 gap-x-4 py-2 items-center hover:bg-gray-50 transition">
+          <span class="col-span-3 text-sm text-gray-700">
+            {{ appt.appointment_date }} {{ appt.appointment_time }}
+          </span>
+          <span class="col-span-3 text-sm text-gray-800">
+            {{ appt.patient_name }}
+          </span>
+          <span class="col-span-3 text-sm text-gray-800">
+            {{ appt.symptoms }}
+          </span>
+          <span class="col-span-2 text-sm font-medium text-indigo-600">
+            {{ appt.appointment_status }}
+          </span>
+          <span class="col-span-1 flex justify-end">
+            <button *ngIf="appt.appointment_status === 'COMPLETED'" class="bg-gradient-to-r from-blue-400 to-blue-800 text-white px-2 py-1 rounded-lg shadow
+                     hover:from-blue-600 hover:to-blue-200 transition" (click)="toggleEditCompleted(appt.id)">
+              Xem chi tiết
+            </button>
+          </span>
+        </li>
+        <!-- KHUNG XEM CHI TIẾT -->
+        <li *ngIf="editingCompleted[appt.id]" class="bg-blue-50 p-4 rounded-b-lg">
+          <div class="bg-white p-3 rounded shadow">
+            <h4 class="font-semibold mb-1">Kế hoạch điều trị:</h4>
+            <p>{{ appt.treatment_plan }}</p>
+          </div>
+        </li>
+      </ng-container>
+    </ul>
+
+
+    <!-- PAGINATION COMPLETED -->
+    <div class="flex justify-end items-center mt-4 space-x-2">
+      <button (click)="prevCompleted()" [disabled]="completedSchedule?.currentPage === 0"
+        class="px-3 py-1 bg-gray-200 rounded disabled:opacity-50">
+        ← Trước
+      </button>
+      <span class="text-sm text-gray-600">
+        {{ (completedSchedule?.currentPage ?? 0) + 1 }} / {{ completedSchedule?.totalPages }}
+      </span>
+      <button (click)="nextCompleted()"
+        [disabled]="(completedSchedule?.currentPage ?? 0) + 1 === completedSchedule?.totalPages"
+        class="px-3 py-1 bg-gray-200 rounded disabled:opacity-50">
+        Sau →
+      </button>
+    </div>
+  </div>
+</div>

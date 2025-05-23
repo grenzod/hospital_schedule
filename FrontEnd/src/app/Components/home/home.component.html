@@ -1,0 +1,157 @@
+<div class="relative w-full h-screen max-h-[80vh] overflow-hidden rounded-lg shadow-lg">
+  <!-- Main carousel container -->
+  <div class="relative w-full h-full">
+    <!-- Slides container -->
+    <div class="relative w-full h-full" #slideContainer>
+      <div *ngFor="let slide of slides; let i = index" 
+           class="absolute w-full h-full transition-opacity duration-500 ease-in-out"
+           [ngClass]="{'opacity-100': currentSlide === i, 'opacity-0': currentSlide !== i}">
+        <img [src]="slide" 
+             [alt]="'Slide ' + (i + 1)"
+             class="w-full h-full object-cover transform transition-transform duration-500 ease-in-out hover:scale-105">
+      </div>
+    </div>
+
+    <!-- Navigation buttons -->
+    <button (click)="previousSlide()" 
+            class="absolute left-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full transition-colors">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+    </button>
+    <button (click)="nextSlide()" 
+            class="absolute right-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full transition-colors">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+    </button>
+
+    <!-- Indicators -->
+    <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+      <button *ngFor="let slide of slides; let i = index" 
+              (click)="goToSlide(i)"
+              class="w-2 h-2 rounded-full transition-colors"
+              [ngClass]="{'bg-white': currentSlide === i, 'bg-white/50': currentSlide !== i}">
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="w-full py-8 flex justify-center items-center bg-white">
+  <button
+    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 shadow-md hover:shadow-lg text-lg">
+    Đặt phòng khám
+  </button>
+</div>
+
+<!-- Services Section -->
+<div class="container mx-auto px-4 py-16">
+  <h2 class="text-3xl font-bold text-center mb-12">TIỆN ÍCH CHO KHÁCH HÀNG</h2>
+
+  <div class="flex flex-col lg:flex-row gap-8">
+    <!-- Left side - Service boxes -->
+    <div class="lg:w-1/2 grid grid-cols-2 gap-6">
+      <!-- Service 1 - Xanh dương -->
+      <div
+        class="relative bg-white p-6 rounded-lg shadow-lg cursor-pointer transition-all duration-300 ease-in-out hover:shadow-xl group"
+        (mouseenter)="selectService(0)" 
+        (click)="setActiveService(0)"
+        [ngClass]="{'ring-2 ring-blue-500': activeService === 0}">
+        <!-- Overlay màu khi hover và active -->
+        <div
+          class="absolute inset-0 bg-blue-500 opacity-0 group-hover:opacity-10 rounded-lg transition-opacity duration-300"
+          [ngClass]="{'opacity-20': activeService === 0}">
+        </div>
+
+        <div class="relative z-10">
+          <div class="text-gray-500 mb-4 group-hover:text-blue-600 transition-colors"
+               [ngClass]="{'text-blue-500': activeService === 0}">
+            <i class="fas fa-calendar-alt text-3xl"></i>
+          </div>
+          <h3 class="font-bold text-lg mb-2 text-gray-800 group-hover:text-blue-600 transition-colors"
+              [ngClass]="{'text-blue-600': activeService === 0}">
+            Đặt lịch khám
+          </h3>
+          <p class="text-gray-600 text-sm">Đặt lịch khám và lấy mẫu xét nghiệm tại nhà</p>
+        </div>
+      </div>
+
+      <!-- Service 2 - Xanh lá -->
+      <div
+        class="relative bg-white p-6 rounded-lg shadow-lg cursor-pointer transition-all duration-300 ease-in-out hover:shadow-xl group"
+        (mouseenter)="selectService(1)" (click)="setActiveService(1)"
+        [ngClass]="{'ring-2 ring-green-500': activeService === 1}">
+        <!-- Overlay màu khi hover và active -->
+        <div
+          class="absolute inset-0 bg-green-500 opacity-0 group-hover:opacity-10 rounded-lg transition-opacity duration-300"
+          [ngClass]="{'opacity-20': activeService === 1}"></div>
+
+        <div class="relative z-10">
+          <div class="text-green-500 mb-4 group-hover:text-green-600 transition-colors">
+            <i class="fas fa-search text-3xl"></i>
+          </div>
+          <h3 class="font-bold text-lg mb-2 group-hover:text-green-600">Tra cứu kết quả</h3>
+          <p class="text-gray-600 text-sm">Xem kết quả khám và điều trị</p>
+        </div>
+      </div>
+
+      <!-- Service 3 - Cam -->
+      <div
+        class="relative bg-white p-6 rounded-lg shadow-lg cursor-pointer transition-all duration-300 ease-in-out hover:shadow-xl group"
+        (mouseenter)="selectService(2)" (click)="setActiveService(2)"
+        [ngClass]="{'ring-2 ring-orange-500': activeService === 2}">
+        <!-- Overlay màu khi hover và active -->
+        <div
+          class="absolute inset-0 bg-orange-500 opacity-0 group-hover:opacity-10 rounded-lg transition-opacity duration-300"
+          [ngClass]="{'opacity-20': activeService === 2}"></div>
+
+        <div class="relative z-10">
+          <div class="text-orange-500 mb-4 group-hover:text-orange-600 transition-colors">
+            <i class="fas fa-dollar-sign text-3xl"></i>
+          </div>
+          <h3 class="font-bold text-lg mb-2 group-hover:text-orange-600">Bảng giá dịch vụ</h3>
+          <p class="text-gray-600 text-sm">Xem chi tiết bảng giá các dịch vụ</p>
+        </div>
+      </div>
+
+      <!-- Service 4 - Vàng -->
+      <div
+        class="relative bg-white p-6 rounded-lg shadow-lg cursor-pointer transition-all duration-300 ease-in-out hover:shadow-xl group"
+        (mouseenter)="selectService(3)" (click)="setActiveService(3)"
+        [ngClass]="{'ring-2 ring-yellow-500': activeService === 3}">
+        <!-- Overlay màu khi hover và active -->
+        <div
+          class="absolute inset-0 bg-yellow-500 opacity-0 group-hover:opacity-10 rounded-lg transition-opacity duration-300"
+          [ngClass]="{'opacity-20': activeService === 3}"></div>
+
+        <div class="relative z-10">
+          <div class="text-yellow-500 mb-4 group-hover:text-yellow-600 transition-colors">
+            <i class="fas fa-question-circle text-3xl"></i>
+          </div>
+          <h3 class="font-bold text-lg mb-2 group-hover:text-yellow-600">Hỏi đáp chuyên gia</h3>
+          <p class="text-gray-600 text-sm">Tư vấn trực tiếp với bác sĩ</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right side - Image display -->
+    <div class="lg:w-1/2">
+      <div class="bg-white rounded-lg shadow-lg overflow-hidden h-full">
+        <img [src]="currentServiceImage" alt="Service illustration"
+          class="w-full h-full object-cover transition-all duration-300">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Google Maps Section -->
+<div class="w-full py-12 bg-gray-50">
+  <div class="container mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center mb-8">Vị Trí Của Chúng Tôi</h2>
+    <div class="w-full h-[500px] rounded-lg shadow-lg overflow-hidden">
+      <iframe [src]="mapUrl | safe" class="w-full h-full" style="border:0" loading="lazy" allowfullscreen
+        referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </div>
+  </div>
+</div>
