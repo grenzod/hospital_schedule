@@ -33,7 +33,7 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'retrieve', component: RetrievePasswordComponent },
-  { path: 'doctor/:id', component: DetailDoctorComponent, canActivate: [AuthGuard] },
+  { path: 'doctor/:id', component: DetailDoctorComponent },
   { path: 'professional/:id', component: DoctorListComponent },
   { path: 'service', component: ServiceUserComponent },
   { path: 'news', component: NewsComponent },

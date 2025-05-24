@@ -60,7 +60,7 @@ class VectorDB:
         return self.embedding.embed_query(doc.page_content)
 
     def _build_db_(self, documents):
-        # Bước 1: Tạo embedding cho tài liệu
+        # Tạo embedding cho tài liệu
         embeddings = []
         with multiprocessing.Pool(processes=VectorDB.get_num_cpu()) as pool:
             embeddings = list(tqdm(
@@ -74,17 +74,17 @@ class VectorDB:
         ))
         embeddings = np.array(embeddings, dtype=np.float32)
 
-        # Bước 2: Tạo chỉ mục IndexIVFFlat
+        # Tạo chỉ mục IndexIVFFlat
         embedding_dim = embeddings.shape[1]  # Kích thước của vector embedding
         quantizer = faiss.IndexFlatL2(embedding_dim)  # Quantizer cho IndexIVFFlat
         index = faiss.IndexIVFFlat(quantizer, embedding_dim, self.nlist, faiss.METRIC_L2)
         index.nprobe = 10  # Số cụm sẽ tìm kiếm (tăng tốc độ nhưng có thể giảm độ chính xác)
 
-        # Bước 3: Huấn luyện chỉ mục và thêm vector
+        # Huấn luyện chỉ mục và thêm vector
         index.train(embeddings)
         index.add(embeddings)
 
-        # Bước 4: Tạo FAISS vector store với chỉ mục đã tối ưu
+        # Tạo FAISS vector store với chỉ mục đã tối ưu
         doc_dict = {i: doc for i, doc in enumerate(documents)}
         self.db = FAISS(
             embedding_function=self.embedding,

@@ -89,7 +89,7 @@
             <div *ngFor="let comment of comments" class="bg-gray-100 p-4 rounded-lg shadow">
                 <p class="font-semibold text-green-700">{{ comment.full_name }}</p>
                 <p>{{ comment.comment }}</p>
-                <div *ngIf="role.name == 'admin'">
+                <div *ngIf="role != null && role.name == 'admin'">
                     <button (click)="deleteComment(comment.id)" class="bg-gradient-to-r from-red-700 via-red-500 to-red-300
                     text-white font-semibold
                     px-4 py-2
@@ -130,7 +130,7 @@
             </div>
             <button type="submit"
                 class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition duration-300"
-                [disabled]="commentForm.invalid">
+                [ngClass]="{'opacity-50 cursor-not-allowed': commentForm.invalid}">
                 Gửi bình luận
             </button>
         </form>

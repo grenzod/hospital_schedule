@@ -1,6 +1,6 @@
 import dotenv
 from langchain_community.utilities import SQLDatabase
-from langchain_core.messages import SystemMessage
+from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 from langchain.chat_models import init_chat_model
 from langchain_community.tools.sql_database.tool import QuerySQLDatabaseTool
 from langchain.chains import RetrievalQA
@@ -21,7 +21,7 @@ query = """
     FROM reviews
     WHERE comment IS NOT NULL AND comment != ''
     ORDER BY created_at DESC
-    LIMIT 10
+    LIMIT 1000
     """
 execute_query_tool = QuerySQLDatabaseTool(db=db)
 results = execute_query_tool.invoke(query)
@@ -72,10 +72,39 @@ reviews_chain = RetrievalQA.from_chain_type(
     chain_type_kwargs={"prompt": review_prompt}
 )
 
+# def get_review_response(messages: list) -> str:
+#     messages = [
+#         SystemMessage(content="""You are a helpful AI assistant that maintains conversation context 
+#                       and answers questions accurately 
+#                       and answer me using Vietnamese
+#                       and only answer the question based on the context retrieved by Database SQL."""),
+#         *messages 
+#     ]
+#     response = reviews_chain.invoke(messages)
+#     return response
+
 def get_review_response(messages: list) -> str:
-    messages = [
-        SystemMessage(content="You are a helpful AI assistant that maintains conversation context and answers questions accurately and answer me using Vietnamese"),
-        *messages 
-    ]
-    response = reviews_chain.invoke(messages)
-    return response
+    system_message = SystemMessage(content="""You are a helpful AI assistant that maintains conversation context 
+                      and answers questions accurately 
+                      and answer me using Vietnamese
+                      and only answer the question based on the context retrieved by Database SQL.""")
+    
+    full_messages = [system_message] + messages
+    
+    conversation = "\n".join([msg.content for msg in full_messages])
+    
+    response_dict = reviews_chain.invoke(conversation)
+    
+    return response_dict.get('result', "Không có câu trả lời hợp lệ.")
+
+# history = [
+#     {"role": "user", "content": "Bác sĩ Nguyễn Quốc Dũng trong bệnh viện MEDCASE được bệnh nhân đánh giá như nào ?, trả lời chính xác dựa trên thông tin được lưu trong SQL"},
+# ]
+# messages = []
+# for entry in history:
+#     if entry["role"] == "user":
+#         messages.append(HumanMessage(content=entry["content"]))
+#     else:
+#         messages.append(AIMessage(content=entry["content"]))
+# response = get_review_response(messages)
+# print("Response:", response)

@@ -48,21 +48,6 @@ def get_response(messages: list) -> str:
     except Exception as e:
         print(f"Error generating answer: {str(e)}")
         return "Xin lỗi, tôi gặp lỗi khi tìm kiếm thông tin y tế. Vui lòng thử lại."
-    
-# def get_response(messages: list) -> str: 
-#     try:
-#         # Extract the actual question text from the messages list
-#         if isinstance(messages, list):
-#             question = messages[-1].content  # Get content of last message
-#         else:
-#             question = messages
-            
-#         genai_chain = initialize_chain()
-#         response = generate_answer(question, genai_chain)
-#         return response["answer"]
-#     except Exception as e:
-#         print(f"Error generating answer: {str(e)}")
-#         return "Sorry, I encountered an error while generating the answer."
 
 if __name__ == "__main__":
     freeze_support()

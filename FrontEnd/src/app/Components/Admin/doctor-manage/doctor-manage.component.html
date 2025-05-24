@@ -1,9 +1,9 @@
 <app-home-admin></app-home-admin>
 <div class="container mx-auto px-4 py-6">
     <div class="bg-white p-4 rounded-lg shadow">
-        <h3 class="text-lg font-semibold mb-4">Danh sách Bác sĩ</h3>
+        <h3 class="text-lg font-semibold mb-4 text-center">Danh sách Bác sĩ</h3>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-center">
             <!-- Tìm theo tên -->
             <div class="flex flex-col">
                 <label for="keyword" class="mb-1 text-sm font-medium text-gray-700">Tìm kiếm theo tên</label>
@@ -38,19 +38,19 @@
 
         <ul class="divide-y divide-gray-200">
             <!-- HEADER -->
-            <li class="grid grid-cols-12 gap-4 py-2 font-semibold text-gray-800">
+            <li class="grid grid-cols-12 gap-4 py-2 font-semibold text-gray-800 text-center">
                 <div class="col-span-2">Hình ảnh</div>
                 <div class="col-span-2">Họ tên</div>
                 <div class="col-span-2">Khoa</div>
                 <div class="col-span-2">Mã số</div>
-                <div class="col-span-2 text-center">Năm kinh nghiệm</div>
+                <div class="col-span-2 text-center">Kinh nghiệm</div>
                 <div class="col-span-1 text-center">Trạng thái</div>
-                <div class="col-span-1"></div>
+                <div class="col-span-1">Chức năng</div>
             </li>
 
             <!-- ROWS -->
             <ng-container *ngFor="let doctor of doctorList?.items; trackBy: trackById">
-                <li class="grid grid-cols-12 gap-4 py-3 items-center hover:bg-gray-50 transition">
+                <li class="grid grid-cols-12 gap-4 py-3 items-center hover:bg-gray-50 transition text-center">
                     <div class="col-span-2 text-sm text-gray-700">
                         <img [src]="doctor.avatar_url" alt="Ảnh bác sĩ" class="w-full h-48 object-contain"
                             (error)="handleImageError($event)">
@@ -70,12 +70,19 @@
                     <div class="col-span-1 text-sm font-medium text-indigo-600 text-center">
                         {{ doctor.is_available ? 'Hoạt động' : 'Đã ẩn' }}
                     </div>
-                    <div class="col-span-1 flex justify-end">
-                        <button class="bg-gradient-to-r from-blue-400 to-blue-800 text-white px-2 py-1 rounded-lg shadow
-                     hover:from-blue-600 hover:to-blue-200 transition" (click)="toggleStatusDoctor(doctor.id)">
-                            {{ doctor.is_available ? 'Ẩn' : 'Hoạt động lại' }}
+
+                    <div class="col-span-1 flex flex-col item-center text-center space-y-4 text-1x0">
+                        <button
+                            class="bg-gradient-to-r from-blue-400 to-blue-800 text-white px-4 py-2 rounded-lg shadow hover:from-blue-600 hover:to-blue-200 transition"
+                            (click)="toggleStatusDoctor(doctor.id)">
+                            {{ doctor.is_available ? 'Hire' : 'Active' }}
+                        </button>
+                        <button
+                            class="bg-gradient-to-r from-purple-400 to-purple-800 text-white px-4 py-2 rounded-lg shadow hover:from-purple-600 hover:to-purple-200 transition">
+                            Upgrade
                         </button>
                     </div>
+
                 </li>
             </ng-container>
         </ul>

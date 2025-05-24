@@ -24,9 +24,8 @@ export class DetailDoctorComponent implements OnInit {
   currentPage: number = 0;
   limit: number = 10;
   totalPages: number = 1;
-  role!: Role;
+  role: Role | null = null;
 
-  // <--- BỔ SUNG: state để bật/tắt form đặt lịch
   showBookingForm: boolean = false;
 
   constructor(
@@ -40,7 +39,10 @@ export class DetailDoctorComponent implements OnInit {
 
   ngOnInit() {
     this.doctorId = +this.activeRoute.snapshot.paramMap.get('id')!;
-    this.role = this.userService.getUserFromCookie()!.role;
+    const user = this.userService.getUserFromCookie();
+    if (user) {
+      this.role = user.role;
+    }
     this.getAllReviewsByDoctorId();
     this.getDoctorById();
 
@@ -73,8 +75,11 @@ export class DetailDoctorComponent implements OnInit {
       });
   }
 
-  // <--- BỔ SUNG: method để toggle hiển thị form
   toggleBookingForm() {
+    if (this.role == null) {
+      alert('Bạn cần đăng nhập để đặt lịch hẹn!');
+      return;
+    }
     this.showBookingForm = !this.showBookingForm;
   }
 
@@ -105,6 +110,14 @@ export class DetailDoctorComponent implements OnInit {
   }
 
   submitComment() {
+    if (this.role == null) {
+      alert('Bạn cần đăng nhập để bình luận!');
+      return;
+    }
+    if (!this.commentForm.valid) {
+        alert('Vui lòng nhập bình luận hợp lệ.');
+        return;
+    }
     if (this.commentForm.valid) {
       const userId = this.userService.getUserFromCookie()?.id ?? 0;
       const doctorId = this.doctorId;
@@ -126,7 +139,7 @@ export class DetailDoctorComponent implements OnInit {
   }
 
   deleteComment(id: number) {
-    if (this.role.name == 'admin') {
+    if (this.role != null && this.role.name == 'admin') {
       this.commentService.deleteComment(id).subscribe(
         (response: any) => {
           alert(response);
