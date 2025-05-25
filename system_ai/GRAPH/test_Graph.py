@@ -8,12 +8,6 @@ from langchain.chat_models import init_chat_model
 from pydantic import BaseModel, Field
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 from langchain_core.output_parsers import StrOutputParser
-# notebook_dir = Path().absolute()
-# PROJECT_ROOT = notebook_dir.parent
-# sys.path.append(str(PROJECT_ROOT))
-# from RAG_SQL.testSQL import get_review_response
-# from RAG_PDF.testPDF import get_response
-
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.append(str(PROJECT_ROOT))
 from RAG_SQL.testSQL import get_review_response
@@ -107,57 +101,6 @@ def general_qa_node(state: State) -> Dict:
             "source": "general"
         }
 
-# def router_node(state: State) -> Dict:    
-#     if "fallback_attempts" not in state:
-#         state["fallback_attempts"] = 0
-    
-#     conversation_context = ""
-#     if state["conversation_history"]:
-#         conversation_context = "\nRecent conversation history:\n"
-#         for entry in state["conversation_history"][-3:]:
-#             conversation_context += f"{entry['role'].capitalize()}: {entry['content']}\n"
-
-#     decision = router.invoke(
-#         [
-#             SystemMessage(
-#                 content=f"""You are a specialized medical query router. Your task is to analyze the input query and determine the MOST APPROPRIATE processing step. Choose one of:
-
-#                 - 'sql_rag': For queries about:
-#                   * Database information, structured data questions
-#                   * Doctor reviews, ratings, or performance metrics
-#                   * Patient feedback or experiences with specific doctors
-#                   * Any queries requiring retrieval from structured databases
-#                   * Examples: "What's Dr. Smith's rating?", "Show patient feedback for Dr. Johnson"
-
-#                 - 'pdf_rag': For queries about:
-#                   * Disease symptoms, treatments, or medical conditions
-#                   * Healthcare procedures or medical advice
-#                   * Medical guidelines or protocols
-#                   * Any queries requiring retrieval from medical documents
-#                   * Examples: "What are the symptoms of dengue?", "How is malaria treated?"
-
-#                 - 'general': For queries that are:
-#                   * Non-medical, casual, or general conversation
-#                   * Not requiring specific medical data
-#                   * Follow-up questions about previous responses
-#                   * Examples: "Thank you", "Can you explain that more simply?"
-
-#                 Focus on the core content of the query and ignore greetings or polite phrases. 
-#                 Select the most appropriate step based on the query's intent and content.
-#                 Provide a confidence score between 0 and 1.
-#                 {state['conversation_history']}
-#                 """
-#             ),
-#             HumanMessage(content=state["input"]),
-#         ]
-#     )
-    
-#     return {"decision": {
-#         "step": decision.step,
-#         "confidence": decision.confidence,
-#         "reasoning": decision.reasoning
-#     }}
-
 def router_node(state: State) -> Dict:    
     # Initialize fallback attempts if not present
     if "fallback_attempts" not in state:
@@ -218,19 +161,16 @@ def router_node(state: State) -> Dict:
 
 def fallback_router(state: State) -> str:
     if state.get("fallback_attempts", 0) >= 2:
-        return "General"  # After 2 failed attempts, go to general QA
+        return "General"  
     
-    # Check if we've already tried the current source
     if state.get("source") == "sql":
         return "Pdf"
     elif state.get("source") == "pdf":
         return "General"
     
-    # Default routing
     decision = state["decision"]["step"]
     confidence = state["decision"]["confidence"]
     
-    # Low confidence routing
     if confidence < 0.7:
         if decision == "sql":
             if "database" in state["input"].lower() or "doctor" in state["input"].lower():
@@ -243,7 +183,6 @@ def fallback_router(state: State) -> str:
             else:
                 return "General"
     
-    # High confidence routing
     if decision == "sql":
         return "Sql"
     elif decision == "pdf":

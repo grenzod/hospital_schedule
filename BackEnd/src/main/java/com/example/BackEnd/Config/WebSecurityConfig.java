@@ -106,9 +106,9 @@ public class WebSecurityConfig {
                         .requestMatchers(GET,
                                 String.format("%s/home/list**", apiPrefix)).hasRole(Role.ADMIN)
                         .requestMatchers(POST,
-                                String.format("%s/home", apiPrefix)).hasRole(Role.ADMIN)
+                                String.format("%s/home**", apiPrefix)).hasRole(Role.ADMIN)
                         .requestMatchers(DELETE,
-                                String.format("%s/home", apiPrefix)).hasRole(Role.ADMIN)
+                                String.format("%s/home**", apiPrefix)).hasRole(Role.ADMIN)
                         .anyRequest().authenticated()
                 );
 

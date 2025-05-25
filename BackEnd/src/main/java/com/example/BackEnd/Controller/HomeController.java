@@ -100,13 +100,13 @@ public class HomeController {
             }
             StoreFileUtil.storeFile(file, "home");
 
-            return ResponseEntity.ok("Image uploaded successfully");
+            return ResponseEntity.ok().body("Image uploaded successfully");
         } catch (IOException e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
 
-    @DeleteMapping
+    @DeleteMapping("")
     public ResponseEntity<String> deleteImage(
             @RequestParam("imageName") String imageName) {
         try {

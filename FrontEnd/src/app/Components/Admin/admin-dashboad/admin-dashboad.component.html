@@ -71,7 +71,11 @@
           class="w-full p-4 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors 
                 flex items-center justify-center gap-2 cursor-pointer">
           <span>Thêm ảnh mới</span>
-          <input type="file" (change)="onFileSelected($event)" accept="image/*" class="hidden">
+          <input 
+              type="file" 
+              (change)="onFileSelected($event)" 
+              accept="image/*"
+              class="hidden">
         </label>
       </div>
     </div>

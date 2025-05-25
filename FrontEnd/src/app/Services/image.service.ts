@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { environment } from "../Environments/environment";
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Observable, catchError, throwError } from "rxjs";
 
 @Injectable({
     providedIn: 'root'
@@ -30,13 +30,22 @@ export class ImageService {
 
     deleteImageByName(name: string): Observable<any> {
         const params = new HttpParams()
-            .set('folder', name);
+            .set('imageName', name);
         return this.http.delete<any>(`${this.apiUrl}/home`, { params });
     }
 
     uploadImage(file: File): Observable<any> {
         const formData = new FormData();
         formData.append('file', file);
-        return this.http.post<any>(`${this.apiUrl}/home`, formData);
+        
+        return this.http.post<any>(`${this.apiUrl}/home`, formData, {
+            reportProgress: true,
+            observe: 'response'
+        }).pipe(
+            catchError(error => {
+                console.error('Upload error:', error);
+                return throwError(() => error);
+            })
+        );
     }
 }

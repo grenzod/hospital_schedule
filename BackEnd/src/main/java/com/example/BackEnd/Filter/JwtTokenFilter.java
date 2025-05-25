@@ -34,10 +34,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
-                                    @NonNull HttpServletResponse response,
-                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain) throws ServletException, IOException {
         try {
-            if(isBypassToken(request)) {
+            if (isBypassToken(request)) {
                 filterChain.doFilter(request, response);
                 return;
             }
@@ -47,31 +47,35 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 return;
             }
             final String token = authHeader.substring(7);
-            if(tokenRepository.findByToken(token) == null){
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized, You have accessed over 3 devices");
+            if (tokenRepository.findByToken(token) == null) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                        "Unauthorized, You have accessed over 3 devices");
                 return;
             }
 
             final String subject = jwtTokenUtil.extractSubject(token);
             if (subject != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 User userDetails = (User) userDetailsService.loadUserByUsername(subject);
-                if(jwtTokenUtil.validateToken(token, userDetails)) {
-                    UsernamePasswordAuthenticationToken authenticationToken =
-                            new UsernamePasswordAuthenticationToken(
-                                    userDetails,
-                                    null,
-                                    userDetails.getAuthorities());
+                if (jwtTokenUtil.validateToken(token, userDetails)) {
+                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities());
                     authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                 }
             }
             filterChain.doFilter(request, response);
-        }catch (Exception e) {
+        } catch (Exception e) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
         }
     }
 
-    private boolean isBypassToken(@NonNull HttpServletRequest request){
+    private boolean isBypassToken(@NonNull HttpServletRequest request) {
+        if (request.getServletPath().contains(String.format("%s/reviews/analyze", apiPrefix)) 
+            && request.getMethod().contains("GET")) {
+            return false;
+        }
         final List<Pair<String, String>> bypassTokens = Arrays.asList(
                 Pair.of(String.format("%s/roles", apiPrefix), "GET"),
                 Pair.of(String.format("%s/departments", apiPrefix), "GET"),
@@ -83,15 +87,13 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 Pair.of(String.format("%s/users/register", apiPrefix), "POST"),
                 Pair.of(String.format("%s/users/login", apiPrefix), "POST"),
                 Pair.of(String.format("%s/users/verify", apiPrefix), "POST"),
-                Pair.of(String.format("%s/users/retrieve", apiPrefix), "POST")
-        );
+                Pair.of(String.format("%s/users/retrieve", apiPrefix), "POST"));
 
-        for(var it : bypassTokens){
-            if(request.getServletPath().contains(it.getFirst()) && request.getMethod().contains(it.getSecond())){
+        for (var it : bypassTokens) {
+            if (request.getServletPath().contains(it.getFirst()) && request.getMethod().contains(it.getSecond())) {
                 return true;
             }
         }
         return false;
     }
 }
-

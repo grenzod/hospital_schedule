@@ -138,6 +138,8 @@ export class AdminDashboadComponent implements OnInit {
           if (this.currentSlideIndex >= this.slides.length) {
             this.currentSlideIndex = Math.max(0, this.slides.length - 1);
           }
+          alert('Xóa ảnh thành công');
+          this.loadSlides();
         },
         error: (error) => console.error('Error deleting image:', error)
       });
@@ -146,17 +148,37 @@ export class AdminDashboadComponent implements OnInit {
 
   onFileSelected(event: any) {
     const file = event.target.files?.[0];
-    if (file && this.slides.length < 1) {
-      this.imageService.uploadImage(file).subscribe({
-        next: () => {
-          this.loadSlides();
-          alert('Image uploaded successfully');
-        },
-        error: (error) => console.error('Error uploading image:', error)
-      });
-    } else if (this.slides.length >= 5) {
-      alert('Maximum 1 images allowed');
+    if (!file) {
+        alert('Vui lòng chọn một file');
+        return;
     }
+
+    if (!file.type.startsWith('image/')) {
+        alert('Chỉ chấp nhận file ảnh');
+        return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+        alert('File không được vượt quá 10MB');
+        return;
+    }
+
+    if (this.slides.length >= 5) {
+        alert('Đã đạt giới hạn tối đa 5 ảnh. Vui lòng xóa bớt ảnh cũ.');
+        return;
+    }
+
+    this.imageService.uploadImage(file).subscribe({
+        next: (response) => {
+            console.log('Upload response:', response);
+            this.loadSlides();
+            alert('Tải ảnh lên thành công');
+        },
+        error: (error) => {
+            console.error('Error uploading image:', error.error);
+            alert(error.error || 'Có lỗi khi tải ảnh lên');
+        }
+    });
   }
 
   private loadSlides() {
