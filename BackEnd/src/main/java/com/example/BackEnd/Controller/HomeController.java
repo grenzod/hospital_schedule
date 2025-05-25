@@ -4,12 +4,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -98,7 +100,10 @@ public class HomeController {
                 return ResponseEntity.badRequest()
                         .body("Folder already contains 5 images. Please delete some before uploading more.");
             }
-            StoreFileUtil.storeFile(file, "home");
+            String filename = StringUtils.cleanPath(file.getOriginalFilename());
+            Path destination = folderPath.resolve(filename);
+            Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
+            // StoreFileUtil.storeFile(file, "home");
 
             return ResponseEntity.ok().body("Image uploaded successfully");
         } catch (IOException e) {
