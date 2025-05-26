@@ -22,12 +22,16 @@ public class DepartmentResponse {
     @JsonProperty("thumbnail_url")
     private String thumbnailUrl;
 
+    @JsonProperty("is_available")
+    private boolean isAvailable;
+
     public static DepartmentResponse fromDepartment(Department department) {
         return DepartmentResponse.builder()
                 .id(department.getId())
                 .name(department.getName())
                 .thumbnailUrl(department.getThumbnailUrl())
                 .description(department.getDescription())
+                .isAvailable(department.isAvailable())
                 .build();
     }
 }

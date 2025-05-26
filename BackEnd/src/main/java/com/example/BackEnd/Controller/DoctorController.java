@@ -1,5 +1,6 @@
 package com.example.BackEnd.Controller;
 
+import com.example.BackEnd.DTO.DoctorDTO;
 import com.example.BackEnd.Entity.Doctor;
 import com.example.BackEnd.Response.DoctorResponse;
 import com.example.BackEnd.Response.ObjectListResponse;
@@ -107,6 +108,35 @@ public class DoctorController {
             return ResponseEntity.badRequest().body("Invalid ID format");
         } catch (IndexOutOfBoundsException e) {
             return ResponseEntity.badRequest().body("IDs must contain exactly 2 values");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping(value = "/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updateDoctor(
+            @PathVariable("id") Integer id,
+            @RequestPart("doctor") DoctorDTO doctorDTO,
+            @RequestPart(value = "file", required = false) MultipartFile file) {
+
+        try {
+            String imageFilename = null;
+            if (file != null && !file.isEmpty()) {
+                if (file.getSize() > 10 * 1024 * 1024) {
+                    return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
+                            .body("File is too large! Maximum size is 10 MB");
+                }
+                String contentType = file.getContentType();
+                if (contentType == null || !contentType.startsWith("image/")) {
+                    return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
+                            .body("File must be an image!");
+                }
+                imageFilename = StoreFileUtil.storeFile(file, "doctors");
+            }
+
+            Doctor doctor = iDoctorService.upgradeDoctor(id, doctorDTO, imageFilename);
+            return ResponseEntity.ok().body(doctor);
+
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

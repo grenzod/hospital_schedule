@@ -1,40 +1,47 @@
 <app-home-admin></app-home-admin>
 <div class="container mx-auto px-4 py-6">
-  <div class="p-4 bg-white rounded-lg shadow-md space-y-4">
+
+  <div class="p-4 bg-white rounded-lg shadow-md space-y-8">
     <h2 class="font-bold text-2xl mb-4 text-center">Theo dõi thống kê</h2>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-      <div class="h-[300px]">
-        <h2 class="text-xl font-semibold mb-4">Người dùng mới (6 tháng)</h2>
-        <canvas baseChart [datasets]="barChartData" [labels]="barChartLabels" [options]="barChartOptions"
-          [type]="barChartType">
-        </canvas>
+      <div class="bg-gray-50 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+        <h3 class="text-lg font-semibold mb-4 truncate">Người dùng mới (6 tháng)</h3>
+        <div class="relative h-60">
+          <canvas baseChart class="!w-full !h-full" [datasets]="barChartData" [labels]="barChartLabels"
+            [options]="barChartOptions" [type]="barChartType">
+          </canvas>
+        </div>
       </div>
 
-      <div class="h-[300px]">
-        <h2 class="text-xl font-semibold mb-4">Các lịch đặt khám mới (6 tháng)</h2>
-        <canvas baseChart [datasets]="barChartDataOfAppointment" [labels]="barChartLabelsOfAppointment"
-          [options]="barChartOptions" [type]="barChartType">
-        </canvas>
+      <div class="bg-gray-50 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+        <h3 class="text-lg font-semibold mb-4 truncate">Lịch đặt khám mới (6 tháng)</h3>
+        <div class="relative h-60">
+          <canvas baseChart class="!w-full !h-full" [datasets]="barChartDataOfAppointment"
+            [labels]="barChartLabelsOfAppointment" [options]="barChartOptions" [type]="barChartType">
+          </canvas>
+        </div>
       </div>
 
-      <div class="h-[300px] md:col-span-2">
-        <h2 class="text-xl font-semibold mb-4">Các Bình luận mới (6 tháng)</h2>
-        <canvas baseChart [datasets]="barChartDataOfComment" [labels]="barChartLabelsOfComment" [options]="barChartOptions"
-          [type]="barChartType">
-        </canvas>
+      <div class="bg-gray-50 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+        <h3 class="text-lg font-semibold mb-4 truncate">Bình luận mới (6 tháng)</h3>
+        <div class="relative h-60">
+          <canvas baseChart class="!w-full !h-full" [datasets]="barChartDataOfComment"
+            [labels]="barChartLabelsOfComment" [options]="barChartOptions" [type]="barChartType">
+          </canvas>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="p-4 bg-white rounded-lg shadow-md mt-6">
+  <div class="p-4 bg-white rounded-lg shadow-md mt-8 space-y-8">
     <h2 class="font-bold text-2xl mb-4 text-center">Quản lý quảng cáo trên trang chủ</h2>
 
-    <div class="flex gap-4">
+    <div class="flex gap-4 mt 2">
       <!-- Left side -->
       <div class="flex-1 relative h-[400px]">
-        <!-- Previous slide button -->
+
         <button (click)="prevSlide()"
           class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-black/30 hover:bg-black/50 text-white p-4 rounded-r">
           <span class="text-2xl">←</span>
@@ -43,16 +50,14 @@
         <!-- Current slide -->
         <div class="relative w-full h-full">
           <ng-container *ngIf="slides.length > 0">
-            <img [src]="slides[currentSlideIndex].url" 
-                 [alt]="slides[currentSlideIndex].name"
-                 class="w-full h-full object-cover transform transition-transform duration-500 ease-in-out hover:scale-105">
+            <img [src]="slides[currentSlideIndex].url" [alt]="slides[currentSlideIndex].name"
+              class="w-full h-full object-cover transform transition-transform duration-500 ease-in-out hover:scale-105">
           </ng-container>
           <div *ngIf="slides.length === 0" class="flex items-center justify-center h-full">
             <p class="text-gray-500">No images available</p>
           </div>
         </div>
 
-        <!-- Next slide button -->
         <button (click)="nextSlide()"
           class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-black/30 hover:bg-black/50 text-white p-4 rounded-l">
           <span class="text-2xl">→</span>
@@ -61,23 +66,80 @@
 
       <!-- Right side -->
       <div class="w-48 flex flex-col gap-4 justify-center">
-        <button (click)="deleteCurrentSlide()"
-          class="w-full p-4 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors 
+        <label class="w-full p-4 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors 
+                flex items-center justify-center gap-2 cursor-pointer">
+          <span class="text-xl font-bold leading-none">+ Thêm ảnh mới</span>
+          <input type="file" (change)="onFileSelected($event)" accept="image/*" class="hidden">
+        </label>
+
+        <button (click)="deleteCurrentSlide()" class="w-full p-4 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors 
                 flex items-center justify-center gap-2">
+                <i class="fas fa-trash w-3.5 h-3.5"></i>
           Xóa ảnh hiện tại
         </button>
-
-        <label
-          class="w-full p-4 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors 
-                flex items-center justify-center gap-2 cursor-pointer">
-          <span>Thêm ảnh mới</span>
-          <input 
-              type="file" 
-              (change)="onFileSelected($event)" 
-              accept="image/*"
-              class="hidden">
-        </label>
       </div>
+    </div>
+  </div>
+
+  <div class="p-6 bg-white rounded-lg shadow-lg mt-8">
+    <h2 class="text-2xl font-bold mb-6 text-center">Quản lý khoa</h2>
+    <div class="mb-4">
+      <input type="text" [(ngModel)]="searchKeyword" (input)="loadDepartments()" placeholder="Tìm kiếm phòng ban..."
+        class="w-full p-3 border rounded-lg focus:ring-green-500">
+    </div>
+
+    <div class="flex gap-8">
+      <div class="flex-1">
+
+        <div class="space-y-4 mb-6">
+          <div *ngFor="let department of departments?.items"
+            class="flex gap-4 p-4 bg-white rounded-lg shadow-sm hover:shadow-md">
+            <img [src]="department.thumbnail_url" [alt]="department.name" class="w-24 h-24 object-cover rounded-lg"
+              (error)="handleImageError($event)">
+
+            <div class="flex-1">
+              <h3 class="text-lg font-semibold truncate">{{department.name}}</h3>
+              <p class="mt-2 text-gray-600 line-clamp-2">{{department.description}}</p>
+            </div>
+
+            <div class="md:col-span-2 pt-4 flex justify-end space-x-3">
+              <button class="items-center bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded-lg text-sm">
+                <i class="fas fa-trash w-3.5 h-3.5"></i>
+                <span> {{ department.is_available ? 'Ẩn' : 'Hiện' }} </span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-center gap-4">
+          <button (click)="onPageChange(true)" [disabled]="departments?.currentPage === 0"
+            class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg disabled:opacity-50">
+            ← Trước
+          </button>
+
+          <span class="text-sm text-gray-500">
+            {{ (departments?.currentPage || 0) + 1 }} / {{ departments?.totalPages || 1 }}
+          </span>
+
+          <button (click)="onPageChange(false)"
+            [disabled]="(departments?.currentPage ?? 0) + 1 === departments?.totalPages"
+            class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg disabled:opacity-50">
+            Sau →
+          </button>
+        </div>
+      </div>
+
+      <!-- Right section -->
+      <div class="w-64 flex items-center justify-center">
+        <div class="p-4 bg-gray-50 rounded-lg border border-dashed w-full">
+          <button
+            class="w-full py-3 px-4 bg-green-500 hover:bg-green-600 text-white rounded-lg flex items-center justify-center gap-2">
+            <span class="text-xl font-bold leading-none">+</span>
+            Thêm khoa mới
+          </button>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>

@@ -20,8 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.BackEnd.Utils.StoreFileUtil;
-
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
@@ -84,7 +82,8 @@ public class HomeController {
                         .body("File must be an image!");
             }
 
-            Path folderPath = ROOT_PATH.resolve("uploads").resolve("home");
+            // Path folderPath = ROOT_PATH.resolve("uploads").resolve("home");
+            Path folderPath = Paths.get("C:/Users/TIN/eclipse-workspace/javaweb/Project_hospital/BackEnd/uploads/home");
             long imageCount = Files.list(folderPath)
                     .filter(Files::isRegularFile)
                     .filter(path -> {
@@ -103,23 +102,29 @@ public class HomeController {
             String filename = StringUtils.cleanPath(file.getOriginalFilename());
             Path destination = folderPath.resolve(filename);
             Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
-            // StoreFileUtil.storeFile(file, "home");
 
-            return ResponseEntity.ok().body("Image uploaded successfully");
+            return ResponseEntity.ok().body(Map.of("message", "Image uploaded successfully"));
         } catch (IOException e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
 
     @DeleteMapping("")
-    public ResponseEntity<String> deleteImage(
-            @RequestParam("imageName") String imageName) {
+    public ResponseEntity<?> deleteImage(@RequestParam("imageName") String imageName) {
         try {
-            Path path = ROOT_PATH.resolve("uploads").resolve("home").resolve(imageName);
-            Files.deleteIfExists(path);
-            return ResponseEntity.ok("Image deleted successfully");
+            Path folderPath = Paths.get("C:/Users/TIN/eclipse-workspace/javaweb/Project_hospital/BackEnd/uploads/home");
+
+            Path filePath = folderPath.resolve(imageName);
+            if (!Files.exists(filePath)) {
+                return ResponseEntity.badRequest().body("Image not found: " + imageName);
+            }
+            System.out.println("Deleting file: " + filePath.toString());
+            Files.delete(filePath); 
+            return ResponseEntity.ok().body(Map.of("message", "Image deleted successfully"));
         } catch (IOException e) {
-            return ResponseEntity.status(500).body("Error: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error deleting image: " + e.getMessage());
         }
     }
 }

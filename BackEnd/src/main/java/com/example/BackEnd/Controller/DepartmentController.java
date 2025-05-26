@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("${api.prefix}/departments")
@@ -82,6 +83,8 @@ public class DepartmentController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteDepartmentById(@PathVariable("id") Integer id){
         iDepartmentService.deleteDepartmentById(id);
-        return ResponseEntity.ok("Delete Successfully !!");
+        return ResponseEntity.ok().body(Map.of(
+                "message", "Successfully"
+        ));
     }
 }

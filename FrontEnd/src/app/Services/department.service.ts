@@ -12,7 +12,7 @@ export class DepartmentService {
     private apiUrl = `${environment.apiBaseUrl}`;
 
     constructor(private http: HttpClient,
-                private imageService: ImageService
+        private imageService: ImageService
     ) { }
 
     getDepartments(keyword: string = '', page: number = 0, limit: number = 10): Observable<any> {
@@ -31,5 +31,9 @@ export class DepartmentService {
                     }))
                 }))
             );
+    }
+
+    toggleStatusDepartment(id: number): Observable<any> {
+        return this.http.delete<any>(`${this.apiUrl}/departments/${id}`);
     }
 }

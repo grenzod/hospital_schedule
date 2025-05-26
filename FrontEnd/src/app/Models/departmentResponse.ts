@@ -3,4 +3,5 @@ export interface DepartmentResponse {
     name: string;
     description: string;
     thumbnail_url: string;
+    is_available: boolean;
 }

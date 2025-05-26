@@ -4,6 +4,8 @@ import { UserService, UserStats } from '../../../Services/user.service';
 import { AppointmentService, AppointmentStats } from '../../../Services/appointment.service';
 import { CommentService, CommentStats } from '../../../Services/comment.service';
 import { ImageService } from '../../../Services/image.service';
+import { DepartmentResponse } from '../../../Models/departmentResponse';
+import { DepartmentService } from '../../../Services/department.service';
 
 interface Advertisement {
   name: string;
@@ -11,10 +13,10 @@ interface Advertisement {
 }
 
 interface Chart {
-  data: number[]; 
-  label: string; 
-  backgroundColor: string; 
-  borderColor: string; 
+  data: number[];
+  label: string;
+  backgroundColor: string;
+  borderColor: string;
   hoverBackgroundColor: string
 }
 
@@ -26,9 +28,10 @@ export class AdminDashboadComponent implements OnInit {
   public barChartType: ChartType = 'bar';
   public barChartOptions: ChartOptions = {
     responsive: true,
-    scales: { 
-      y: { 
-        beginAtZero: true 
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        beginAtZero: true
       }
     },
     plugins: {
@@ -48,10 +51,10 @@ export class AdminDashboadComponent implements OnInit {
 
   public barChartLabels: string[] = [];
   public barChartData: Chart[] = [
-    { 
-      data: [], 
+    {
+      data: [],
       label: 'Người dùng mới',
-      backgroundColor: 'rgba(54, 162, 235, 0.5)', 
+      backgroundColor: 'rgba(54, 162, 235, 0.5)',
       borderColor: 'rgb(54, 162, 235)',
       hoverBackgroundColor: 'rgba(54, 162, 235, 0.7)'
     }
@@ -59,10 +62,10 @@ export class AdminDashboadComponent implements OnInit {
 
   public barChartLabelsOfAppointment: string[] = [];
   public barChartDataOfAppointment: Chart[] = [
-    { 
-      data: [], 
+    {
+      data: [],
       label: 'Lịch đặt mới',
-      backgroundColor: 'rgba(75, 192, 192, 0.5)', 
+      backgroundColor: 'rgba(75, 192, 192, 0.5)',
       borderColor: 'rgb(75, 192, 192)',
       hoverBackgroundColor: 'rgba(75, 192, 192, 0.7)'
     }
@@ -70,28 +73,33 @@ export class AdminDashboadComponent implements OnInit {
 
   public barChartLabelsOfComment: string[] = [];
   public barChartDataOfComment: Chart[] = [
-    { 
-      data: [], 
+    {
+      data: [],
       label: 'Bình luận mới',
-      backgroundColor: 'rgba(153, 102, 255, 0.5)', 
+      backgroundColor: 'rgba(153, 102, 255, 0.5)',
       borderColor: 'rgb(153, 102, 255)',
       hoverBackgroundColor: 'rgba(153, 102, 255, 0.7)'
     }
   ];
   slides: Advertisement[] = [];
   currentSlideIndex: number = 0;
+  departments: { items: DepartmentResponse[]; totalPages: number; currentPage: number } | null = null;
+  searchKeyword: string = '';
+  limit: number = 5;
 
   constructor(private userService: UserService,
-              private appointmentService: AppointmentService,
-              private commentService: CommentService,
-              private imageService: ImageService 
-  ) {}
+    private appointmentService: AppointmentService,
+    private commentService: CommentService,
+    private imageService: ImageService,
+    private departmentService: DepartmentService
+  ) { }
 
   ngOnInit(): void {
     this.getInforNewUsers();
     this.getInforNewAppointments();
     this.getInforNewComments();
     this.loadSlides();
+    this.loadDepartments();
   }
 
   getInforNewUsers(): void {
@@ -123,8 +131,8 @@ export class AdminDashboadComponent implements OnInit {
   }
 
   prevSlide() {
-    this.currentSlideIndex = this.currentSlideIndex === 0 
-      ? this.slides.length - 1 
+    this.currentSlideIndex = this.currentSlideIndex === 0
+      ? this.slides.length - 1
       : this.currentSlideIndex - 1;
   }
 
@@ -133,12 +141,12 @@ export class AdminDashboadComponent implements OnInit {
       const currentSlide = this.slides[this.currentSlideIndex];
 
       this.imageService.deleteImageByName(currentSlide.name).subscribe({
-        next: () => {
+        next: (response: any) => {
           this.slides.splice(this.currentSlideIndex, 1);
           if (this.currentSlideIndex >= this.slides.length) {
             this.currentSlideIndex = Math.max(0, this.slides.length - 1);
           }
-          alert('Xóa ảnh thành công');
+          alert(response.message);
           this.loadSlides();
         },
         error: (error) => console.error('Error deleting image:', error)
@@ -149,47 +157,86 @@ export class AdminDashboadComponent implements OnInit {
   onFileSelected(event: any) {
     const file = event.target.files?.[0];
     if (!file) {
-        alert('Vui lòng chọn một file');
-        return;
+      alert('Vui lòng chọn một file');
+      return;
     }
 
     if (!file.type.startsWith('image/')) {
-        alert('Chỉ chấp nhận file ảnh');
-        return;
+      alert('Chỉ chấp nhận file ảnh');
+      return;
     }
 
     if (file.size > 10 * 1024 * 1024) {
-        alert('File không được vượt quá 10MB');
-        return;
+      alert('File không được vượt quá 10MB');
+      return;
     }
 
     if (this.slides.length >= 5) {
-        alert('Đã đạt giới hạn tối đa 5 ảnh. Vui lòng xóa bớt ảnh cũ.');
-        return;
+      alert('Đã đạt giới hạn tối đa 5 ảnh. Vui lòng xóa bớt ảnh cũ.');
+      return;
     }
 
     this.imageService.uploadImage(file).subscribe({
-        next: (response) => {
-            console.log('Upload response:', response);
-            this.loadSlides();
-            alert('Tải ảnh lên thành công');
-        },
-        error: (error) => {
-            console.error('Error uploading image:', error.error);
-            alert(error.error || 'Có lỗi khi tải ảnh lên');
-        }
+      next: (response: any) => {
+        this.loadSlides();
+        alert(response.message);
+      },
+      error: (error) => {
+        alert(error.error || 'Có lỗi khi tải ảnh lên');
+      }
     });
   }
 
   private loadSlides() {
     this.imageService.getListImage('home').subscribe({
-        next: (response: any) => {
-            this.slides = response.map((item: any) => ({
-                name: item.name || item[0]?.name,
-                url: item.url || item[1]?.url
-            }));
-        },
-        error: (error) => console.error('Error loading slides:', error)
+      next: (response: any) => {
+        this.slides = response.map((item: any) => ({
+          name: item.name || item[0]?.name,
+          url: item.url || item[1]?.url
+        }));
+      },
+      error: (error) => console.error('Error loading slides:', error)
     });
+  }
+
+  loadDepartments(page: number = 0): void {
+    this.departmentService.getDepartments(this.searchKeyword, page, this.limit)
+      .subscribe({
+        next: (response) => {
+          this.departments = {
+            items: response.objects,
+            totalPages: response.total,
+            currentPage: page
+          }
+        },
+        error: (error) => {
+          console.error('Error loading departments:', error);
+        }
+      });
+  }
+
+  onPageChange(status: true | false): void {
+    if (status) {
+      this.loadDepartments(this.departments ? this.departments.currentPage + 1 : 0);
+    }
+    else {
+      this.loadDepartments(this.departments ? this.departments.currentPage - 1 : 0);
+    }
+  }
+
+  handleImageError(event: any): void {
+    event.target.src = 'assets/images/error-404.webp';
+  }
+
+  toggleStatus(id: number): void {
+    this.departmentService.toggleStatusDepartment(id).subscribe({
+      next: (response: any) => {
+        alert(response.message);
+        this.loadDepartments(this.departments ? this.departments.currentPage : 0);
+      },
+      error: (error: any) => {
+        alert(error.error);
+      }
+    })
   }
 }

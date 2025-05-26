@@ -1,5 +1,6 @@
 package com.example.BackEnd.Service.impl;
 
+import com.example.BackEnd.DTO.DoctorDTO;
 import com.example.BackEnd.Entity.Department;
 import com.example.BackEnd.Entity.Doctor;
 import com.example.BackEnd.Entity.User;
@@ -10,6 +11,7 @@ import com.example.BackEnd.Repositories.mysql.UserRepository;
 import com.example.BackEnd.Response.DoctorResponse;
 import com.example.BackEnd.Service.IDoctorService;
 import lombok.AllArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -76,6 +78,20 @@ public class DoctorService implements IDoctorService {
         return doctorRepository.findById(id)
             .map(DoctorResponse::fromDoctor)
             .orElseThrow(() -> new RuntimeException("Doctor not found"));
+    }
+
+    @Override
+    public Doctor upgradeDoctor(Integer doctorId, DoctorDTO doctorDTO, String file) throws Exception {
+        Doctor doctor = doctorRepository.findById(doctorId)
+                .orElseThrow(() -> new RuntimeException("Doctor not found"));
+        if (doctor.getIsAvailable() == false) {
+            throw new Exception("Doctor is not available for upgrade");
+        }
+        doctor.setDescription(doctorDTO.getDescription());
+        doctor.setLicenseNumber(doctorDTO.getLicenseNumber());
+        doctor.setExperienceYears(doctorDTO.getExperienceYears());
+        doctor.setAvatarUrl(file);
+        return doctorRepository.save(doctor);
     }
 
 }

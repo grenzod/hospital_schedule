@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, QueryList, Renderer2, ViewChildren } from '@angular/core';
 import { DoctorService } from '../../../Services/doctor.service';
 import { DoctorResponse } from '../../../Models/doctorResponse';
 import { DepartmentService } from '../../../Services/department.service';
@@ -10,6 +10,8 @@ import { DepartmentResponse } from '../../../Models/departmentResponse';
   styleUrl: './doctor-manage.component.css'
 })
 export class DoctorManageComponent implements OnInit {
+  @ViewChildren('upgradeDoctorForm') upgradeDoctorForms!: QueryList<ElementRef<HTMLDivElement>>;
+
   keyword: string = '';
   doctorList: { items: DoctorResponse[]; totalPages: number; currentPage: number; } | null = null;
   limit: number = 10;
@@ -17,9 +19,17 @@ export class DoctorManageComponent implements OnInit {
   departmentSelected: number | null = null;
   statusOptions: boolean[] = [true, false];
   statusSelected: boolean | null = null;
+  doctorForm = {
+    description: '',
+    licenseNumber: '',
+    experience: 0 as number,
+    file: null as File | null
+  };
+  activeUpgradeDoctorId: number | null = null;
 
   constructor(private doctorService: DoctorService,
-              private departmentService: DepartmentService
+    private departmentService: DepartmentService,
+    private renderer: Renderer2
   ) { }
 
   ngOnInit(): void {
@@ -55,16 +65,16 @@ export class DoctorManageComponent implements OnInit {
 
   toggleStatusDoctor(id: number) {
     this.doctorService.toggleStatusDoctor(id).subscribe({
-      next:(response: any) => {
+      next: (response: any) => {
         alert("Thành công: " + response);
         this.getAllDoctorsByAdmin();
       },
-      error:(err: any) => alert("Có lỗi : " + err.error)
+      error: (err: any) => alert("Có lỗi : " + err.error)
     });
   }
 
   handleImageError(event: any): void {
-    event.target.src = 'assets/images/error-404.webp'; 
+    event.target.src = 'assets/images/error-404.webp';
   }
 
   loadDepartment() {
@@ -79,4 +89,33 @@ export class DoctorManageComponent implements OnInit {
       });
   }
 
+  private toggleInlineForms(): void {
+    const targetList = this.upgradeDoctorForms;
+
+    targetList?.forEach((elementRef, index) => {
+      const user = this.doctorList?.items[index];
+      const shouldShow = user && user.id === this.activeUpgradeDoctorId;
+
+      this.renderer[shouldShow ? 'removeClass' : 'addClass'](
+        elementRef.nativeElement,
+        'hidden'
+      );
+    });
+  }
+
+  onFileChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.doctorForm.file = input.files?.[0] || null;
+  }
+
+  onUpgradeDoctorClick(doctorId: number): void {
+    this.activeUpgradeDoctorId = this.activeUpgradeDoctorId === doctorId ? null : doctorId;
+    if (this.activeUpgradeDoctorId === doctorId) {
+      this.doctorForm = { description: '', licenseNumber: '', experience: 0, file: null };
+    }
+    this.toggleInlineForms();
+  }
+
+  submitUpgradeDoctor(doctorId: number): void {
+  }
 }

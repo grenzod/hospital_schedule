@@ -2,6 +2,7 @@ package com.example.BackEnd.DTO;
 
 import com.example.BackEnd.Entity.Department;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.*;
 
 @Data
@@ -16,4 +17,10 @@ public class DoctorDTO {
 
     @JsonProperty("license_number")
     private String licenseNumber;
+
+    @JsonProperty("experience_years")
+    private Integer experienceYears;
+
+    @JsonProperty("description")
+    private String description;
 }

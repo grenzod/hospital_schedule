@@ -37,7 +37,9 @@ public class DepartmentService implements IDepartmentService {
     @Override
     public void deleteDepartmentById(Integer id) {
         Department department = departmentRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found Department"));
-        department.setAvailable(false);
+        if(department.isAvailable() == true) department.setAvailable(false);
+        else department.setAvailable(true);
+        departmentRepository.save(department);
     }
 
 }
