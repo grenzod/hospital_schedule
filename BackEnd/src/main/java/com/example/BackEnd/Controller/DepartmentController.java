@@ -31,14 +31,15 @@ public class DepartmentController {
     public ResponseEntity<?> getDepartments(
             @RequestParam(defaultValue = "") String keyword,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int limit
+            @RequestParam(defaultValue = "10") int limit,
+            @RequestParam(name = "status", required = false) Boolean status
     ){
         PageRequest pageRequest = PageRequest.of(
                 page,
                 limit,
                 Sort.by("id").descending()
         );
-        Page<DepartmentResponse> departmentPage = iDepartmentService.getAllDepartments(keyword, pageRequest);
+        Page<DepartmentResponse> departmentPage = iDepartmentService.getAllDepartments(keyword, status, pageRequest);
         int totalPages = departmentPage.getTotalPages();
         List<DepartmentResponse> departmentList = departmentPage.getContent();
 

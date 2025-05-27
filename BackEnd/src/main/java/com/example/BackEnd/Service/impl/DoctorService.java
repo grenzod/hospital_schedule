@@ -87,10 +87,10 @@ public class DoctorService implements IDoctorService {
         if (doctor.getIsAvailable() == false) {
             throw new Exception("Doctor is not available for upgrade");
         }
-        doctor.setDescription(doctorDTO.getDescription());
-        doctor.setLicenseNumber(doctorDTO.getLicenseNumber());
-        doctor.setExperienceYears(doctorDTO.getExperienceYears());
-        doctor.setAvatarUrl(file);
+        if(!doctorDTO.getDescription().equals("")) doctor.setDescription(doctorDTO.getDescription());
+        if(!doctorDTO.getLicenseNumber().equals("")) doctor.setLicenseNumber(doctorDTO.getLicenseNumber());
+        if(doctorDTO.getExperienceYears() > 0) doctor.setExperienceYears(doctorDTO.getExperienceYears());
+        if(file != null) doctor.setAvatarUrl(file);
         return doctorRepository.save(doctor);
     }
 

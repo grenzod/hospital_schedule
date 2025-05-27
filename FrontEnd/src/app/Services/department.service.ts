@@ -15,11 +15,14 @@ export class DepartmentService {
         private imageService: ImageService
     ) { }
 
-    getDepartments(keyword: string = '', page: number = 0, limit: number = 10): Observable<any> {
+    getDepartments(keyword: string = '', page: number = 0, limit: number = 10, status: boolean | null = null): Observable<any> {
         let params = new HttpParams()
             .set('keyword', keyword)
             .set('page', page.toString())
             .set('limit', limit.toString());
+        if (status !== null) {
+            params = params.set('status', status.toString());
+        }
 
         return this.http.get(`${this.apiUrl}/departments`, { params })
             .pipe(
@@ -35,5 +38,14 @@ export class DepartmentService {
 
     toggleStatusDepartment(id: number): Observable<any> {
         return this.http.delete<any>(`${this.apiUrl}/departments/${id}`);
+    }
+
+    addDepartment(name: string, description: string, file: File): Observable<any> {
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('description', description);
+        formData.append('file', file);
+
+        return this.http.post(`${this.apiUrl}/departments/add`, formData);
     }
 }

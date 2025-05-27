@@ -25,7 +25,7 @@ export class BookComponent implements OnInit {
     }
 
     loadDepartments(page: number = 0): void {
-        this.departmentService.getDepartments(this.searchKeyword, page, this.pageSize)
+        this.departmentService.getDepartments(this.searchKeyword, page, this.pageSize, true)
             .subscribe({
                 next: (response) => {
                     this.departments = response.objects;

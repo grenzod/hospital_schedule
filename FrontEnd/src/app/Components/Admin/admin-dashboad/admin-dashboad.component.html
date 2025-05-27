@@ -74,7 +74,7 @@
 
         <button (click)="deleteCurrentSlide()" class="w-full p-4 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors 
                 flex items-center justify-center gap-2">
-                <i class="fas fa-trash w-3.5 h-3.5"></i>
+          <i class="fas fa-trash w-3.5 h-3.5"></i>
           Xóa ảnh hiện tại
         </button>
       </div>
@@ -102,7 +102,7 @@
               <p class="mt-2 text-gray-600 line-clamp-2">{{department.description}}</p>
             </div>
 
-            <div class="md:col-span-2 pt-4 flex justify-end space-x-3">
+            <div class="md:col-span-2 pt-4 flex justify-end space-x-3" (click)="toggleStatus(department.id)">
               <button class="items-center bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded-lg text-sm">
                 <i class="fas fa-trash w-3.5 h-3.5"></i>
                 <span> {{ department.is_available ? 'Ẩn' : 'Hiện' }} </span>
@@ -130,13 +130,22 @@
       </div>
 
       <!-- Right section -->
-      <div class="w-64 flex items-center justify-center">
-        <div class="p-4 bg-gray-50 rounded-lg border border-dashed w-full">
+      <div class="w-64 items-center">
+        <div class="p-4 bg-gray-50 rounded-lg border border-dashed w-full" (click)="addNewDepartment()">
           <button
             class="w-full py-3 px-4 bg-green-500 hover:bg-green-600 text-white rounded-lg flex items-center justify-center gap-2">
             <span class="text-xl font-bold leading-none">+</span>
             Thêm khoa mới
           </button>
+        </div>
+
+        <div>
+          <input type="file" (change)="onFileSelectedDepartment($event)" accept="image/*" class="mb-2" />
+          <input type="text" [(ngModel)]="name" placeholder="tên khoa" class="w-full p-2 border rounded mb-1" />
+          <input type="text" [(ngModel)]="description" placeholder="miêu tả" class="w-full p-2 border rounded mb-1" />
+          <div *ngIf="imagePreview" class="mt-2">
+            <img [src]="imagePreview" class="max-h-40 rounded object-cover" />
+          </div>
         </div>
       </div>
 

@@ -18,8 +18,8 @@ public class DepartmentService implements IDepartmentService {
     private final DepartmentRepository departmentRepository;
 
     @Override
-    public Page<DepartmentResponse> getAllDepartments(String keyword, PageRequest pageRequest) {
-        Page<Department> departmentPage = departmentRepository.searchDepartments(keyword, pageRequest);
+    public Page<DepartmentResponse> getAllDepartments(String keyword, Boolean status, PageRequest pageRequest) {
+        Page<Department> departmentPage = departmentRepository.searchDepartments(keyword, status, pageRequest);
         return departmentPage.map(DepartmentResponse::fromDepartment);
     }
 

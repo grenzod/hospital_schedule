@@ -5,7 +5,7 @@
             <div *ngIf="!showBookingForm">
                 <h2 class="text-2xl font-bold text-green-600 mb-4">Giới thiệu bác sĩ</h2>
                 <p class="text-gray-700" *ngIf="doctor?.description; else noDescription">
-                    Ok: {{ doctor?.description }}
+                    {{ doctor?.description }}
                 </p>
                 <ng-template #noDescription>
                     <p class="text-gray-500">Chưa có thông tin mô tả.</p>

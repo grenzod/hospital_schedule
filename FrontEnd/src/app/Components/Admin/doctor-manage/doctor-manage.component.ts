@@ -3,6 +3,7 @@ import { DoctorService } from '../../../Services/doctor.service';
 import { DoctorResponse } from '../../../Models/doctorResponse';
 import { DepartmentService } from '../../../Services/department.service';
 import { DepartmentResponse } from '../../../Models/departmentResponse';
+import { DoctorDTO } from '../../../DTOs/doctor/doctor.DTO';
 
 @Component({
   selector: 'app-doctor-manage',
@@ -117,5 +118,22 @@ export class DoctorManageComponent implements OnInit {
   }
 
   submitUpgradeDoctor(doctorId: number): void {
+    const doctorDTO: DoctorDTO = {
+      description: this.doctorForm.description,
+      license_number: this.doctorForm.licenseNumber,
+      experience_years: this.doctorForm.experience
+    }
+
+    this.doctorService.updateUser(doctorId, doctorDTO, this.doctorForm.file).subscribe({
+      next: (response) => {
+        alert("Cập nhật thành công: ");
+        this.getAllDoctorsByAdmin();
+        this.activeUpgradeDoctorId = null;
+        this.toggleInlineForms();
+      },
+      error: (err: any) => {
+        alert("Có lỗi: " + err.error);
+      }
+    });
   }
 }

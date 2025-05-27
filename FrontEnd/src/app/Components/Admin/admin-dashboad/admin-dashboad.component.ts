@@ -86,6 +86,10 @@ export class AdminDashboadComponent implements OnInit {
   departments: { items: DepartmentResponse[]; totalPages: number; currentPage: number } | null = null;
   searchKeyword: string = '';
   limit: number = 5;
+  image: File | null = null;
+  imagePreview: string | null = null; 
+  name: string = '';
+  description: string = '';
 
   constructor(private userService: UserService,
     private appointmentService: AppointmentService,
@@ -238,5 +242,45 @@ export class AdminDashboadComponent implements OnInit {
         alert(error.error);
       }
     })
+  }
+
+  onFileSelectedDepartment(e: Event): void {
+    const file = (e.target as HTMLInputElement).files?.[0] ?? null;
+    if (!file || !file.type.startsWith('image/')) {
+      alert('Chọn file ảnh hợp lệ.');
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Ảnh không quá 10 MB.');
+      return;
+    }
+    
+    this.image = file;
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imagePreview = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  addNewDepartment(): void {
+    if (!this.name || !this.description || !this.image) {
+      alert('Vui lòng điền đầy đủ thông tin và chọn ảnh.');
+      return;
+    }
+
+    this.departmentService.addDepartment(this.name, this.description, this.image).subscribe({
+      next: (response: any) => {
+        alert("Thêm phòng ban thành công!");
+        this.loadDepartments();
+        this.image = null;
+        this.imagePreview = null; 
+        this.name = '';
+        this.description = '';
+      },
+      error: (error: any) => {
+        alert(error.error);
+      }
+    });
   }
 }

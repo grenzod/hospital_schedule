@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 public interface IDepartmentService {
-    Page<DepartmentResponse> getAllDepartments(String keyword, PageRequest pageRequest);
+    Page<DepartmentResponse> getAllDepartments(String keyword, Boolean status, PageRequest pageRequest);
     Department addDepartment(DepartmentDTO departmentDTO, String file);
     void deleteDepartmentById(Integer id);
 }
