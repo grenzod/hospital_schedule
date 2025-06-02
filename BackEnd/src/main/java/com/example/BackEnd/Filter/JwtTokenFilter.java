@@ -72,9 +72,15 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     }
 
     private boolean isBypassToken(@NonNull HttpServletRequest request) {
-        if (request.getServletPath().contains(String.format("%s/reviews/analyze", apiPrefix)) 
-            && request.getMethod().contains("GET")) {
+        if (request.getServletPath().contains(String.format("%s/reviews/analyze", apiPrefix))
+                && request.getMethod().contains("GET")) {
             return false;
+        }
+        if (request.getServletPath().contains("/swagger-ui") ||
+                request.getServletPath().contains("/swagger-resources") ||
+                request.getServletPath().contains("/v3/api-docs") ||
+                request.getServletPath().contains("/swagger-ui.html")) {
+            return true;
         }
         final List<Pair<String, String>> bypassTokens = Arrays.asList(
                 Pair.of(String.format("%s/roles", apiPrefix), "GET"),

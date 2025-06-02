@@ -28,9 +28,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class HomeController {
 
-    private static final Path ROOT_PATH = Paths.get("")
-            .toAbsolutePath()
-            .resolve("BackEnd");
+    // private static final Path ROOT_PATH = Paths.get("")
+    //         .toAbsolutePath()
+    //         .resolve("BackEnd");
 
     @GetMapping("/list")
     public ResponseEntity<?> getImageUrls(

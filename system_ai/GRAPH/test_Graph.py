@@ -243,9 +243,9 @@ def generate_response(history: List[Dict[str, str]]) -> str:
 
     return state['output']
 
-history = [
-    {"role": "user", "content": "Bác sĩ Nguyễn Quốc Dũng trong bệnh viện MEDCASE được bệnh nhân đánh giá như nào ?"},
-]
+# history = [
+#     {"role": "user", "content": "Bác sĩ Nguyễn Quốc Dũng trong bệnh viện MEDCASE được bệnh nhân đánh giá như nào ?"},
+# ]
 
-response = generate_response(history)
-print("Response:", response)
+# response = generate_response(history)
+# print("Response:", response)
