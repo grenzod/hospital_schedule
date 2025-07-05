@@ -28,14 +28,13 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(
                                 "/swagger-ui/**", 
-                                       "/swagger-resources/*",
-                                       "/v3/api-docs/**",
-                                       "/swagger-ui.html").permitAll()
+                                "/swagger-resources/*",
+                                "/v3/api-docs/**",
+                                "/swagger-ui.html").permitAll()
                         .requestMatchers(
                                 String.format("%s/users/login", apiPrefix),
                                 String.format("%s/users/register", apiPrefix),

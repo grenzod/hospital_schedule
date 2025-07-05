@@ -49,15 +49,12 @@ public class VerificationService implements IVerificationService {
 
     @Override
     public EmailVerification createOne(String to, String otp) {
-    EmailVerification ev = verificationRepository.findByEmail(otp);
-    if (ev == null) {
-        ev = new EmailVerification();
+        EmailVerification ev = verificationRepository.findByEmail(otp);
+        if (ev == null) {
+            ev = new EmailVerification();
+        }
         ev.setEmail(to);
         ev.setCode(otp);
-    } else {
-        ev.setEmail(to);
-        ev.setCode(otp);
+        return verificationRepository.save(ev);
     }
-    return verificationRepository.save(ev);
-}
 }
